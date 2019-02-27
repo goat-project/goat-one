@@ -1,0 +1,44 @@
+# Goat-one configuration
+
+# identifier of instantiate
+identifier: goat
+
+# records from given time
+# time format: yyyy-mm-dd hh:mm:ss + nsec nanoseconds
+records-from: "2018-12-02 12:30:00"
+
+# records to given time
+# time format: yyyy-mm-dd hh:mm:ss + nsec nanoseconds
+records-to:
+
+# records for given period
+records-for-period:
+
+# Goat server endpoint
+endpoint: 127.0.0.1
+
+# OpenNebula endpoint
+opennebula-endpoint: 127.0.0.1
+
+# OpenNebula secret (username:password)
+opennebula-secret: oneadmin:123456
+
+# timeout for OpenNebula calls
+opennebula-timeout: 20s
+
+# debug
+debug: false
+
+# version
+version: 1.0.0
+
+# subcommands for virtual machine
+vm:
+  # site name
+  site-name: goat-vm-site-name
+
+  # cloud type
+  cloud-type: goat-vm-cloud-type
+
+  # virtual machine cloud compute service
+  cloud-compute-service:
