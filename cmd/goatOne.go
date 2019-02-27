@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -31,6 +33,8 @@ var goatOneCmd = &cobra.Command{
 }
 
 func initGoatOne() {
+	cobra.OnInitialize(initConfig)
+
 	goatOneCmd.PersistentFlags().StringP(cfgIdentifier, "i", viper.GetString(cfgIdentifier),
 		"goat identifier [IDENTIFIER] (required)")
 	goatOneCmd.PersistentFlags().StringP(cfgRecordsFrom, "f", viper.GetString(cfgRecordsFrom),
@@ -49,4 +53,20 @@ func initGoatOne() {
 		"timeout for OpenNebula calls [TIMEOUT_FOR_OPENNEBULA_CALLS] (required)")
 	goatOneCmd.PersistentFlags().StringP(cfgDebug, "d", viper.GetString(cfgDebug),
 		"debug")
+}
+
+func initConfig() {
+	// name of config file (without extension)
+	viper.SetConfigName("goat-one")
+
+	// paths to look for the config file in
+	viper.AddConfigPath("config/")
+	viper.AddConfigPath("/etc/goat-one/")
+	viper.AddConfigPath("$HOME/.goat-one/")
+
+	// find and read the config file
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(fmt.Errorf("fatal error config file: %s", err))
+	}
 }
