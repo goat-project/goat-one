@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -32,6 +33,16 @@ var goatOneCmd = &cobra.Command{
 		checkRequired(append(vmRequired, append(networkRequired, storageRequired...)...))
 		// TODO: do stuff here
 	},
+}
+
+// Execute uses the args (os.Args[1:] by default)
+// and run through the command tree finding appropriate matches
+// for commands and then corresponding flags.
+func Execute() {
+	if err := goatOneCmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
 
 // Initialize initializes configuration and CLI options.
