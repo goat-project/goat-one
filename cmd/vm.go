@@ -22,6 +22,7 @@ var vmCmd = &cobra.Command{
 		"extracts data about virtual machines, filters them accordingly and " +
 		"then sends them to a server for further processing.",
 	Run: func(cmd *cobra.Command, args []string) {
+		checkRequired(vmRequired)
 		// TODO: do VM stuff here
 	},
 }

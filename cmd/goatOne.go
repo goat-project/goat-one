@@ -29,6 +29,7 @@ var goatOneCmd = &cobra.Command{
 		"then sends them to a server for further processing.",
 	Version: viper.GetString(cfgVersion),
 	Run: func(cmd *cobra.Command, args []string) {
+		checkRequired(append(vmRequired, append(networkRequired, storageRequired...)...))
 		// TODO: do stuff here
 	},
 }
@@ -75,6 +76,17 @@ func initConfig() {
 	err := viper.ReadInConfig()
 	if err != nil {
 		panic(fmt.Errorf("fatal error config file: %s", err))
+	}
+}
+
+func checkRequired(required []string) {
+	globalRequired := []string{cfgIdentifier, cfgEndpoint, cfgOpennebulaEndpoint, cfgOpennebulaSecret,
+		cfgOpennebulaTimeout}
+
+	for _, req := range append(required, globalRequired...) {
+		if viper.GetString(req) == "" {
+			panic(fmt.Errorf("required flag \"%s\" not set", req))
+		}
 	}
 }
 

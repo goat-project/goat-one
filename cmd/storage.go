@@ -6,6 +6,8 @@ const (
 // TODO: add constants for flags here
 )
 
+var storageRequired = []string{ /* TODO: add required flags here */ }
+
 var storageCmd = &cobra.Command{
 	Use:   "storage",
 	Short: "Extract storage data",
@@ -13,6 +15,7 @@ var storageCmd = &cobra.Command{
 		"extracts data about storages, filters them accordingly and " +
 		"then sends them to a server for further processing.",
 	Run: func(cmd *cobra.Command, args []string) {
+		checkRequired(storageRequired)
 		// TODO: do storage stuff here
 	},
 }
