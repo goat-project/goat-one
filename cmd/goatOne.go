@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -53,6 +54,12 @@ func initGoatOne() {
 		"timeout for OpenNebula calls [TIMEOUT_FOR_OPENNEBULA_CALLS] (required)")
 	goatOneCmd.PersistentFlags().StringP(cfgDebug, "d", viper.GetString(cfgDebug),
 		"debug")
+
+	bindFlags(*goatOneCmd, []string{cfgIdentifier, cfgRecordsFrom, cfgRecordsTo, cfgRecordsForPeriod, cfgEndpoint,
+		cfgOpennebulaEndpoint, cfgOpennebulaSecret, cfgOpennebulaTimeout, cfgDebug})
+
+	viper.SetDefault("author", "Lenka Svetlovska")
+	viper.SetDefault("license", "apache")
 }
 
 func initConfig() {
@@ -69,4 +76,25 @@ func initConfig() {
 	if err != nil {
 		panic(fmt.Errorf("fatal error config file: %s", err))
 	}
+}
+
+func bindFlags(command cobra.Command, flagsForBinding []string) {
+	for _, flag := range flagsForBinding {
+		err := viper.BindPFlag(flag, command.PersistentFlags().Lookup(parseFlagName(flag)))
+		if err != nil {
+			panic(fmt.Errorf("unable to initialize \"%s\" flag", flag))
+		}
+	}
+}
+
+func parseFlagName(CfgName string) string {
+	return lastString(strings.Split(CfgName, "."))
+}
+
+func lastString(ss []string) string {
+	if len(ss) == 0 {
+		return ""
+	}
+
+	return ss[len(ss)-1]
 }
