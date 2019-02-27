@@ -34,6 +34,14 @@ var goatOneCmd = &cobra.Command{
 	},
 }
 
+// Initialize initializes configuration and CLI options.
+func Initialize() {
+	initGoatOne()
+	initVM()
+	initNetwork()
+	initStorage()
+}
+
 func initGoatOne() {
 	cobra.OnInitialize(initConfig)
 
