@@ -19,8 +19,9 @@ const (
 	cfgOpennebulaSecret   = "opennebula-secret" // nolint: gosec
 	cfgOpennebulaTimeout  = "opennebula-timeout"
 	cfgDebug              = "debug"
-	cfgVersion            = "version"
 )
+
+const version = "1.0.0"
 
 var goatOneCmd = &cobra.Command{
 	Use:   "goat-one",
@@ -28,7 +29,7 @@ var goatOneCmd = &cobra.Command{
 	Long: "The accounting client is a command-line tool that connects to a cloud, " +
 		"extracts data about virtual machines, networks and storages, filters them accordingly and " +
 		"then sends them to a server for further processing.",
-	Version: viper.GetString(cfgVersion),
+	Version: version,
 	Run: func(cmd *cobra.Command, args []string) {
 		checkRequired(append(vmRequired, append(networkRequired, storageRequired...)...))
 		// TODO: do stuff here
