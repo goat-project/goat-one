@@ -95,7 +95,8 @@ func initConfig() {
 	// find and read the config file
 	err := viper.ReadInConfig()
 	if err != nil {
-		panic(fmt.Errorf("fatal error config file: %s", err))
+		// TODO log that configuration file couldn't be read
+		fmt.Printf("error config file: %s", err)
 	}
 }
 
