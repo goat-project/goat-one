@@ -125,8 +125,10 @@ func parseFlagName(cfgName string) string {
 }
 
 func lastString(ss []string) string {
+	// This should not happen since it is passing a predefined non-empty strings.
+	// It panic here since this will happen only if a mistake in code is made.
 	if len(ss) == 0 {
-		return ""
+		panic("parsing empty string")
 	}
 
 	return ss[len(ss)-1]
