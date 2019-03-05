@@ -2,10 +2,6 @@ package cmd
 
 import "github.com/spf13/cobra"
 
-const (
-// TODO: add constants for flags here
-)
-
 var storageRequired = []string{ /* TODO: add required flags here */ }
 
 var storageCmd = &cobra.Command{
