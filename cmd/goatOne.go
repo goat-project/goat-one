@@ -106,7 +106,9 @@ func checkRequired(required []string) {
 
 	for _, req := range append(required, globalRequired...) {
 		if viper.GetString(req) == "" {
-			panic(fmt.Errorf("required flag \"%s\" not set", req))
+			// TODO log that required flag is missing
+			fmt.Printf("required flag \"%s\" not set", req)
+			os.Exit(1)
 		}
 	}
 }
