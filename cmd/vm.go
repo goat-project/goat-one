@@ -31,9 +31,9 @@ func initVM() {
 	goatOneCmd.AddCommand(vmCmd)
 
 	vmCmd.PersistentFlags().String(parseFlagName(cfgSiteName), viper.GetString(cfgSiteName),
-		"site name [SITE_NAME] (required)")
+		"site name [VM_SITE_NAME] (required)")
 	vmCmd.PersistentFlags().String(parseFlagName(cfgCloudType), viper.GetString(cfgCloudType),
-		"cloud type [CLOUD_TYPE] (required)")
+		"cloud type [VM_CLOUD_TYPE] (required)")
 	vmCmd.PersistentFlags().String(parseFlagName(cfgCloudComputeService), viper.GetString(cfgCloudComputeService),
 		"cloud compute service [VM_CLOUD_COMPUTE_SERVICE]")
 
