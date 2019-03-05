@@ -1,17 +1,23 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
 	"strings"
+
+	"github.com/goat-project/goat-one/logger"
 
 	"github.com/goat-project/goat-one/constants"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	log "github.com/sirupsen/logrus"
 )
 
 const version = "1.0.0"
+
+var goatOneFlags = []string{constants.CfgIdentifier, constants.CfgRecordsFrom, constants.CfgRecordsTo,
+	constants.CfgRecordsForPeriod, constants.CfgEndpoint, constants.CfgOpennebulaEndpoint,
+	constants.CfgOpennebulaSecret, constants.CfgOpennebulaTimeout, constants.CfgDebug, constants.CfgLogPath}
 
 var goatOneCmd = &cobra.Command{
 	Use:   "goat-one",
@@ -21,7 +27,13 @@ var goatOneCmd = &cobra.Command{
 		"then sends them to a server for further processing.",
 	Version: version,
 	Run: func(cmd *cobra.Command, args []string) {
+		logger.Init()
+
 		checkRequired(append(vmRequired, append(networkRequired, storageRequired...)...))
+		if viper.GetBool("debug") {
+			log.WithFields(log.Fields{"version": version}).Debug("goat-one version")
+			logFlags(append(vmFlags, append(networkFlags, storageFlags...)...))
+		}
 		// TODO: do stuff here
 	},
 }
@@ -31,8 +43,7 @@ var goatOneCmd = &cobra.Command{
 // for commands and then corresponding flags.
 func Execute() {
 	if err := goatOneCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.WithFields(log.Fields{"error": err}).Fatal("fatal error execute")
 	}
 }
 
@@ -65,10 +76,9 @@ func initGoatOne() {
 		"timeout for OpenNebula calls [TIMEOUT_FOR_OPENNEBULA_CALLS] (required)")
 	goatOneCmd.PersistentFlags().StringP(constants.CfgDebug, "d", viper.GetString(constants.CfgDebug),
 		"debug")
+	goatOneCmd.PersistentFlags().String(constants.CfgLogPath, viper.GetString(constants.CfgLogPath), "path to log file")
 
-	bindFlags(*goatOneCmd, []string{constants.CfgIdentifier, constants.CfgRecordsFrom, constants.CfgRecordsTo,
-		constants.CfgRecordsForPeriod, constants.CfgEndpoint, constants.CfgOpennebulaEndpoint,
-		constants.CfgOpennebulaSecret, constants.CfgOpennebulaTimeout, constants.CfgDebug})
+	bindFlags(*goatOneCmd, goatOneFlags)
 
 	viper.SetDefault("author", "Lenka Svetlovska")
 	viper.SetDefault("license", "apache")
@@ -86,8 +96,7 @@ func initConfig() {
 	// find and read the config file
 	err := viper.ReadInConfig()
 	if err != nil {
-		// TODO log that configuration file couldn't be read
-		fmt.Printf("error config file: %s", err)
+		log.WithFields(log.Fields{"error": err}).Error("error config file")
 	}
 }
 
@@ -97,9 +106,7 @@ func checkRequired(required []string) {
 
 	for _, req := range append(required, globalRequired...) {
 		if viper.GetString(req) == "" {
-			// TODO log that required flag is missing
-			fmt.Printf("required flag \"%s\" not set", req)
-			os.Exit(1)
+			log.WithFields(log.Fields{"flag": req}).Fatal("required flag not set")
 		}
 	}
 }
@@ -108,7 +115,7 @@ func bindFlags(command cobra.Command, flagsForBinding []string) {
 	for _, flag := range flagsForBinding {
 		err := viper.BindPFlag(flag, command.PersistentFlags().Lookup(parseFlagName(flag)))
 		if err != nil {
-			panic(fmt.Errorf("unable to initialize \"%s\" flag", flag))
+			log.WithFields(log.Fields{"error": err, "flag": flag}).Panic("unable to initialize flag")
 		}
 	}
 }
@@ -121,8 +128,14 @@ func lastString(ss []string) string {
 	// This should not happen since it is passing a predefined non-empty strings.
 	// It panic here since this will happen only if a mistake in code is made.
 	if len(ss) == 0 {
-		panic("parsing empty string")
+		log.Panic("parsing empty string")
 	}
 
 	return ss[len(ss)-1]
+}
+
+func logFlags(flags []string) {
+	for _, flag := range append(goatOneFlags, flags...) {
+		log.WithFields(log.Fields{"flag": flag, "value": viper.Get(flag)}).Debug("flag initialized")
+	}
 }
