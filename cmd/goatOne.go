@@ -120,8 +120,8 @@ func bindFlags(command cobra.Command, flagsForBinding []string) {
 	}
 }
 
-func parseFlagName(CfgName string) string {
-	return lastString(strings.Split(CfgName, "."))
+func parseFlagName(cfgName string) string {
+	return lastString(strings.Split(cfgName, "."))
 }
 
 func lastString(ss []string) string {
