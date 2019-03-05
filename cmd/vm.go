@@ -1,19 +1,12 @@
 package cmd
 
 import (
+	"github.com/goat-project/goat-one/constants"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-const cfgVMSubcommand = "vm."
-
-const (
-	cfgSiteName            = cfgVMSubcommand + "site-name"
-	cfgCloudType           = cfgVMSubcommand + "cloud-type"
-	cfgCloudComputeService = cfgVMSubcommand + "cloud-compute-service"
-)
-
-var vmRequired = []string{cfgSiteName, cfgCloudType}
+var vmRequired = []string{constants.CfgSiteName, constants.CfgCloudType}
 
 var vmCmd = &cobra.Command{
 	Use:   "vm",
@@ -30,12 +23,12 @@ var vmCmd = &cobra.Command{
 func initVM() {
 	goatOneCmd.AddCommand(vmCmd)
 
-	vmCmd.PersistentFlags().String(parseFlagName(cfgSiteName), viper.GetString(cfgSiteName),
+	vmCmd.PersistentFlags().String(parseFlagName(constants.CfgSiteName), viper.GetString(constants.CfgSiteName),
 		"site name [VM_SITE_NAME] (required)")
-	vmCmd.PersistentFlags().String(parseFlagName(cfgCloudType), viper.GetString(cfgCloudType),
+	vmCmd.PersistentFlags().String(parseFlagName(constants.CfgCloudType), viper.GetString(constants.CfgCloudType),
 		"cloud type [VM_CLOUD_TYPE] (required)")
-	vmCmd.PersistentFlags().String(parseFlagName(cfgCloudComputeService), viper.GetString(cfgCloudComputeService),
-		"cloud compute service [VM_CLOUD_COMPUTE_SERVICE]")
+	vmCmd.PersistentFlags().String(parseFlagName(constants.CfgCloudComputeService),
+		viper.GetString(constants.CfgCloudComputeService), "cloud compute service [VM_CLOUD_COMPUTE_SERVICE]")
 
-	bindFlags(*vmCmd, []string{cfgSiteName, cfgCloudType, cfgCloudComputeService})
+	bindFlags(*vmCmd, []string{constants.CfgSiteName, constants.CfgCloudType, constants.CfgCloudComputeService})
 }
