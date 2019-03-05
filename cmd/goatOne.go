@@ -5,20 +5,10 @@ import (
 	"os"
 	"strings"
 
+	"github.com/goat-project/goat-one/constants"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-)
-
-const (
-	cfgIdentifier         = "identifier"
-	cfgRecordsFrom        = "records-from"
-	cfgRecordsTo          = "records-to"
-	cfgRecordsForPeriod   = "records-for-period"
-	cfgEndpoint           = "endpoint"
-	cfgOpennebulaEndpoint = "opennebula-endpoint"
-	cfgOpennebulaSecret   = "opennebula-secret" // nolint: gosec
-	cfgOpennebulaTimeout  = "opennebula-timeout"
-	cfgDebug              = "debug"
 )
 
 const version = "1.0.0"
@@ -57,27 +47,28 @@ func Initialize() {
 func initGoatOne() {
 	cobra.OnInitialize(initConfig)
 
-	goatOneCmd.PersistentFlags().StringP(cfgIdentifier, "i", viper.GetString(cfgIdentifier),
+	goatOneCmd.PersistentFlags().StringP(constants.CfgIdentifier, "i", viper.GetString(constants.CfgIdentifier),
 		"goat identifier [IDENTIFIER] (required)")
-	goatOneCmd.PersistentFlags().StringP(cfgRecordsFrom, "f", viper.GetString(cfgRecordsFrom),
+	goatOneCmd.PersistentFlags().StringP(constants.CfgRecordsFrom, "f", viper.GetString(constants.CfgRecordsFrom),
 		"records from [TIME]")
-	goatOneCmd.PersistentFlags().StringP(cfgRecordsTo, "t", viper.GetString(cfgRecordsTo),
+	goatOneCmd.PersistentFlags().StringP(constants.CfgRecordsTo, "t", viper.GetString(constants.CfgRecordsTo),
 		"records to [TIME]")
-	goatOneCmd.PersistentFlags().StringP(cfgRecordsForPeriod, "p", viper.GetString(cfgRecordsForPeriod),
-		"records for period [TIME PERIOD]")
-	goatOneCmd.PersistentFlags().StringP(cfgEndpoint, "e", viper.GetString(cfgEndpoint),
+	goatOneCmd.PersistentFlags().StringP(constants.CfgRecordsForPeriod, "p",
+		viper.GetString(constants.CfgRecordsForPeriod), "records for period [TIME PERIOD]")
+	goatOneCmd.PersistentFlags().StringP(constants.CfgEndpoint, "e", viper.GetString(constants.CfgEndpoint),
 		"goat server [GOAT_SERVER_ENDPOINT] (required)")
-	goatOneCmd.PersistentFlags().StringP(cfgOpennebulaEndpoint, "o", viper.GetString(cfgOpennebulaEndpoint),
-		"OpenNebula endpoint [OPENNEBULA_ENDPOINT] (required)")
-	goatOneCmd.PersistentFlags().StringP(cfgOpennebulaSecret, "s", viper.GetString(cfgOpennebulaSecret),
-		"OpenNebula secret [OPENNEBULA_SECRET] (required)")
-	goatOneCmd.PersistentFlags().String(cfgOpennebulaTimeout, viper.GetString(cfgOpennebulaTimeout),
+	goatOneCmd.PersistentFlags().StringP(constants.CfgOpennebulaEndpoint, "o",
+		viper.GetString(constants.CfgOpennebulaEndpoint), "OpenNebula endpoint [OPENNEBULA_ENDPOINT] (required)")
+	goatOneCmd.PersistentFlags().StringP(constants.CfgOpennebulaSecret, "s",
+		viper.GetString(constants.CfgOpennebulaSecret), "OpenNebula secret [OPENNEBULA_SECRET] (required)")
+	goatOneCmd.PersistentFlags().String(constants.CfgOpennebulaTimeout, viper.GetString(constants.CfgOpennebulaTimeout),
 		"timeout for OpenNebula calls [TIMEOUT_FOR_OPENNEBULA_CALLS] (required)")
-	goatOneCmd.PersistentFlags().StringP(cfgDebug, "d", viper.GetString(cfgDebug),
+	goatOneCmd.PersistentFlags().StringP(constants.CfgDebug, "d", viper.GetString(constants.CfgDebug),
 		"debug")
 
-	bindFlags(*goatOneCmd, []string{cfgIdentifier, cfgRecordsFrom, cfgRecordsTo, cfgRecordsForPeriod, cfgEndpoint,
-		cfgOpennebulaEndpoint, cfgOpennebulaSecret, cfgOpennebulaTimeout, cfgDebug})
+	bindFlags(*goatOneCmd, []string{constants.CfgIdentifier, constants.CfgRecordsFrom, constants.CfgRecordsTo,
+		constants.CfgRecordsForPeriod, constants.CfgEndpoint, constants.CfgOpennebulaEndpoint,
+		constants.CfgOpennebulaSecret, constants.CfgOpennebulaTimeout, constants.CfgDebug})
 
 	viper.SetDefault("author", "Lenka Svetlovska")
 	viper.SetDefault("license", "apache")
@@ -101,8 +92,8 @@ func initConfig() {
 }
 
 func checkRequired(required []string) {
-	globalRequired := []string{cfgIdentifier, cfgEndpoint, cfgOpennebulaEndpoint, cfgOpennebulaSecret,
-		cfgOpennebulaTimeout}
+	globalRequired := []string{constants.CfgIdentifier, constants.CfgEndpoint, constants.CfgOpennebulaEndpoint,
+		constants.CfgOpennebulaSecret, constants.CfgOpennebulaTimeout}
 
 	for _, req := range append(required, globalRequired...) {
 		if viper.GetString(req) == "" {
