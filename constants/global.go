@@ -20,4 +20,6 @@ const (
 	CfgOpennebulaTimeout = "opennebula-timeout"
 	// CfgDebug represents true for debug mode; false otherwise
 	CfgDebug = "debug"
+	// CfgLogPath represents path to log file
+	CfgLogPath = "log-path"
 )

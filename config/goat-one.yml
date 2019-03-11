@@ -29,6 +29,9 @@ opennebula-timeout: 5m
 # debug
 debug: false
 
+# path to log file
+log-path:
+
 # subcommands for virtual machine
 vm:
   # site name
