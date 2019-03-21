@@ -174,3 +174,18 @@ func (r *Reader) ListAllHosts() ([]*resources.Host, error) {
 
 	return objs, err
 }
+
+// ListAllVirtualNetworks lists all virtual networks by page offset.
+func (r *Reader) ListAllVirtualNetworks(pageOffset int) ([]*resources.VirtualNetwork, error) {
+	or := vnetReader{
+		pageOffset: pageOffset,
+	}
+	res, err := r.readResources(&or)
+
+	objs := make([]*resources.VirtualNetwork, len(res))
+	for i, e := range res {
+		objs[i] = e.(*resources.VirtualNetwork)
+	}
+
+	return objs, err
+}
