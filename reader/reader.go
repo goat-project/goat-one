@@ -161,3 +161,16 @@ func (r *Reader) ListAllImages() ([]*resources.Image, error) {
 
 	return objs, err
 }
+
+// ListAllHosts lists all hosts.
+func (r *Reader) ListAllHosts() ([]*resources.Host, error) {
+	or := hostReader{}
+	res, err := r.readResources(&or)
+
+	objs := make([]*resources.Host, len(res))
+	for i, e := range res {
+		objs[i] = e.(*resources.Host)
+	}
+
+	return objs, err
+}
