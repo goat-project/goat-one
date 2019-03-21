@@ -1,6 +1,7 @@
 package reader
 
 import (
+	"context"
 	"net/http"
 	"time"
 
@@ -19,6 +20,18 @@ type Reader struct {
 	client      *onego.Client
 	rateLimiter *rate.Limiter
 	timeout     time.Duration
+}
+
+type resourcesReaderI interface {
+	readResources(context.Context, *onego.Client) ([]resource, error)
+}
+
+type resourceReaderI interface {
+	readResource(context.Context, *onego.Client) (resource, error)
+}
+
+type resource interface {
+	ID() (int, error)
 }
 
 const pageSize = 100
