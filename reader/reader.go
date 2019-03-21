@@ -127,3 +127,11 @@ func (r *Reader) ListAllVirtualMachines(pageOffset int) ([]*resources.VirtualMac
 
 	return vms, err
 }
+
+// RetrieveVirtualMachineInfo returns virtual machines info by id.
+func (r *Reader) RetrieveVirtualMachineInfo(id int) (*resources.VirtualMachine, error) {
+	vmr := vmReader{id: id}
+	res, err := r.readResource(&vmr)
+
+	return res.(*resources.VirtualMachine), err
+}
