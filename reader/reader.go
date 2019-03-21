@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/onego-project/onego/resources"
+
 	"github.com/rafaeljesus/retry-go"
 
 	"github.com/goat-project/goat-one/constants"
@@ -108,4 +110,20 @@ func (r *Reader) readResource(rri resourceReaderI) (resource, error) {
 	}, attempts, sleepTime)
 
 	return res, err
+}
+
+// ListAllVirtualMachines lists all virtual machines by page offset.
+func (r *Reader) ListAllVirtualMachines(pageOffset int) ([]*resources.VirtualMachine, error) {
+	vmr := vmsReader{
+		pageOffset: pageOffset,
+	}
+
+	res, err := r.readResources(&vmr)
+
+	vms := make([]*resources.VirtualMachine, len(res))
+	for i, e := range res {
+		vms[i] = e.(*resources.VirtualMachine)
+	}
+
+	return vms, err
 }
