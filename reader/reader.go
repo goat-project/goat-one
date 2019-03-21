@@ -148,3 +148,16 @@ func (r *Reader) ListAllUsers() ([]*resources.User, error) {
 
 	return objs, err
 }
+
+// ListAllImages lists all images.
+func (r *Reader) ListAllImages() ([]*resources.Image, error) {
+	or := imageReader{}
+	res, err := r.readResources(&or)
+
+	objs := make([]*resources.Image, len(res))
+	for i, e := range res {
+		objs[i] = e.(*resources.Image)
+	}
+
+	return objs, err
+}
