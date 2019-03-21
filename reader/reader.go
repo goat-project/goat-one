@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/rafaeljesus/retry-go"
+
 	"github.com/goat-project/goat-one/constants"
 	"github.com/onego-project/onego/errors"
 	"github.com/spf13/viper"
@@ -58,4 +60,52 @@ func CreateReader(limiter *rate.Limiter) *Reader {
 		rateLimiter: limiter,
 		timeout:     viper.GetDuration(constants.CfgOpennebulaTimeout),
 	}
+}
+
+func (r *Reader) readResources(rri resourcesReaderI) ([]resource, error) {
+	var res []resource
+	var err error
+
+	err = retry.Do(func() error {
+		if err = r.rateLimiter.Wait(context.Background()); err != nil {
+			log.WithFields(log.Fields{"error": err}).Fatal("error list resources")
+		}
+
+		ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
+		defer cancel()
+
+		res, err = rri.readResources(ctx, r.client)
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}, attempts, sleepTime)
+
+	return res, err
+}
+
+func (r *Reader) readResource(rri resourceReaderI) (resource, error) {
+	var res resource
+	var err error
+
+	err = retry.Do(func() error {
+		if err = r.rateLimiter.Wait(context.Background()); err != nil {
+			log.WithFields(log.Fields{"error": err}).Panic("error retrieve info")
+		}
+
+		ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
+		defer cancel()
+
+		res, err = rri.readResource(ctx, r.client)
+
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}, attempts, sleepTime)
+
+	return res, err
 }
