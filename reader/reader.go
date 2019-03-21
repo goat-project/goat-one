@@ -189,3 +189,16 @@ func (r *Reader) ListAllVirtualNetworks(pageOffset int) ([]*resources.VirtualNet
 
 	return objs, err
 }
+
+// ListAllClusters lists all clusters.
+func (r *Reader) ListAllClusters() ([]*resources.Cluster, error) {
+	cr := clusterReader{}
+	res, err := r.readResources(&cr)
+
+	objs := make([]*resources.Cluster, len(res))
+	for i, e := range res {
+		objs[i] = e.(*resources.Cluster)
+	}
+
+	return objs, err
+}
