@@ -135,3 +135,16 @@ func (r *Reader) RetrieveVirtualMachineInfo(id int) (*resources.VirtualMachine, 
 
 	return res.(*resources.VirtualMachine), err
 }
+
+// ListAllUsers lists all users.
+func (r *Reader) ListAllUsers() ([]*resources.User, error) {
+	or := userReader{}
+	res, err := r.readResources(&or)
+
+	objs := make([]*resources.User, len(res))
+	for i, e := range res {
+		objs[i] = e.(*resources.User)
+	}
+
+	return objs, err
+}
