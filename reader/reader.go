@@ -5,6 +5,11 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/goat-project/goat-one/resource"
+	"github.com/goat-project/goat-one/resource/network"
+	"github.com/goat-project/goat-one/resource/storage"
+	"github.com/goat-project/goat-one/resource/virtualMachine"
+
 	"github.com/onego-project/onego/resources"
 
 	"github.com/rafaeljesus/retry-go"
@@ -27,18 +32,12 @@ type Reader struct {
 }
 
 type resourcesReaderI interface {
-	readResources(context.Context, *onego.Client) ([]resource, error)
+	ReadResources(context.Context, *onego.Client) ([]resource.Resource, error)
 }
 
 type resourceReaderI interface {
-	readResource(context.Context, *onego.Client) (resource, error)
+	ReadResource(context.Context, *onego.Client) (resource.Resource, error)
 }
-
-type resource interface {
-	ID() (int, error)
-}
-
-const pageSize = 100
 
 const attempts = 3
 const sleepTime = time.Second * 1
@@ -53,7 +52,7 @@ func CreateReader(limiter *rate.Limiter) *Reader {
 	}
 
 	log.WithFields(log.Fields{
-		"page-size": pageSize, "attempts": attempts, "sleepTime": sleepTime,
+		"page-size": resource.PageSize, "attempts": attempts, "sleepTime": sleepTime,
 	}).Debug("Reader created with given settings for page size, number of iterations " +
 		"for unsuccessful calls and sleep time between the calls")
 
@@ -64,8 +63,8 @@ func CreateReader(limiter *rate.Limiter) *Reader {
 	}
 }
 
-func (r *Reader) readResources(rri resourcesReaderI) ([]resource, error) {
-	var res []resource
+func (r *Reader) readResources(rri resourcesReaderI) ([]resource.Resource, error) {
+	var res []resource.Resource
 	var err error
 
 	err = retry.Do(func() error {
@@ -76,8 +75,7 @@ func (r *Reader) readResources(rri resourcesReaderI) ([]resource, error) {
 		ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
 		defer cancel()
 
-		res, err = rri.readResources(ctx, r.client)
-
+		res, err = rri.ReadResources(ctx, r.client)
 		if err != nil {
 			return err
 		}
@@ -88,8 +86,8 @@ func (r *Reader) readResources(rri resourcesReaderI) ([]resource, error) {
 	return res, err
 }
 
-func (r *Reader) readResource(rri resourceReaderI) (resource, error) {
-	var res resource
+func (r *Reader) readResource(rri resourceReaderI) (resource.Resource, error) {
+	var res resource.Resource
 	var err error
 
 	err = retry.Do(func() error {
@@ -100,8 +98,7 @@ func (r *Reader) readResource(rri resourceReaderI) (resource, error) {
 		ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
 		defer cancel()
 
-		res, err = rri.readResource(ctx, r.client)
-
+		res, err = rri.ReadResource(ctx, r.client)
 		if err != nil {
 			return err
 		}
@@ -114,11 +111,14 @@ func (r *Reader) readResource(rri resourceReaderI) (resource, error) {
 
 // ListAllVirtualMachines lists all virtual machines by page offset.
 func (r *Reader) ListAllVirtualMachines(pageOffset int) ([]*resources.VirtualMachine, error) {
-	vmr := vmsReader{
-		pageOffset: pageOffset,
+	vmr := virtualMachine.VMsReader{
+		PageOffset: pageOffset,
 	}
 
 	res, err := r.readResources(&vmr)
+	if err != nil {
+		return nil, err
+	}
 
 	vms := make([]*resources.VirtualMachine, len(res))
 	for i, e := range res {
@@ -130,16 +130,26 @@ func (r *Reader) ListAllVirtualMachines(pageOffset int) ([]*resources.VirtualMac
 
 // RetrieveVirtualMachineInfo returns virtual machines info by id.
 func (r *Reader) RetrieveVirtualMachineInfo(id int) (*resources.VirtualMachine, error) {
-	vmr := vmReader{id: id}
+	vmr := virtualMachine.VMReader{
+		ID: id,
+	}
+
 	res, err := r.readResource(&vmr)
+	if err != nil {
+		return nil, err
+	}
 
 	return res.(*resources.VirtualMachine), err
 }
 
 // ListAllUsers lists all users.
 func (r *Reader) ListAllUsers() ([]*resources.User, error) {
-	or := userReader{}
+	or := resource.UserReader{}
+
 	res, err := r.readResources(&or)
+	if err != nil {
+		return nil, err
+	}
 
 	objs := make([]*resources.User, len(res))
 	for i, e := range res {
@@ -151,8 +161,12 @@ func (r *Reader) ListAllUsers() ([]*resources.User, error) {
 
 // ListAllImages lists all images.
 func (r *Reader) ListAllImages() ([]*resources.Image, error) {
-	or := imageReader{}
+	or := storage.Reader{}
+
 	res, err := r.readResources(&or)
+	if err != nil {
+		return nil, err
+	}
 
 	objs := make([]*resources.Image, len(res))
 	for i, e := range res {
@@ -164,8 +178,12 @@ func (r *Reader) ListAllImages() ([]*resources.Image, error) {
 
 // ListAllHosts lists all hosts.
 func (r *Reader) ListAllHosts() ([]*resources.Host, error) {
-	or := hostReader{}
+	or := resource.HostReader{}
+
 	res, err := r.readResources(&or)
+	if err != nil {
+		return nil, err
+	}
 
 	objs := make([]*resources.Host, len(res))
 	for i, e := range res {
@@ -177,10 +195,14 @@ func (r *Reader) ListAllHosts() ([]*resources.Host, error) {
 
 // ListAllVirtualNetworks lists all virtual networks by page offset.
 func (r *Reader) ListAllVirtualNetworks(pageOffset int) ([]*resources.VirtualNetwork, error) {
-	or := vnetReader{
-		pageOffset: pageOffset,
+	or := network.Reader{
+		PageOffset: pageOffset,
 	}
+
 	res, err := r.readResources(&or)
+	if err != nil {
+		return nil, err
+	}
 
 	objs := make([]*resources.VirtualNetwork, len(res))
 	for i, e := range res {
@@ -192,8 +214,12 @@ func (r *Reader) ListAllVirtualNetworks(pageOffset int) ([]*resources.VirtualNet
 
 // ListAllClusters lists all clusters.
 func (r *Reader) ListAllClusters() ([]*resources.Cluster, error) {
-	cr := clusterReader{}
+	cr := resource.ClusterReader{}
+
 	res, err := r.readResources(&cr)
+	if err != nil {
+		return nil, err
+	}
 
 	objs := make([]*resources.Cluster, len(res))
 	for i, e := range res {
