@@ -1,4 +1,4 @@
-package network
+package reader
 
 import (
 	"context"
