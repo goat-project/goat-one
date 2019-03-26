@@ -6,9 +6,9 @@ import (
 	"time"
 
 	"github.com/goat-project/goat-one/resource"
-	"github.com/goat-project/goat-one/resource/network"
-	"github.com/goat-project/goat-one/resource/storage"
-	"github.com/goat-project/goat-one/resource/virtualMachine"
+	networkReader "github.com/goat-project/goat-one/resource/network/reader"
+	storageReader "github.com/goat-project/goat-one/resource/storage/reader"
+	virtualMachineReader "github.com/goat-project/goat-one/resource/virtualMachine/reader"
 
 	"github.com/onego-project/onego/resources"
 
@@ -111,7 +111,7 @@ func (r *Reader) readResource(rri resourceReaderI) (resource.Resource, error) {
 
 // ListAllVirtualMachines lists all virtual machines by page offset.
 func (r *Reader) ListAllVirtualMachines(pageOffset int) ([]*resources.VirtualMachine, error) {
-	vmr := virtualMachine.VMsReader{
+	vmr := virtualMachineReader.VMsReader{
 		PageOffset: pageOffset,
 	}
 
@@ -130,7 +130,7 @@ func (r *Reader) ListAllVirtualMachines(pageOffset int) ([]*resources.VirtualMac
 
 // RetrieveVirtualMachineInfo returns virtual machines info by id.
 func (r *Reader) RetrieveVirtualMachineInfo(id int) (*resources.VirtualMachine, error) {
-	vmr := virtualMachine.VMReader{
+	vmr := virtualMachineReader.VMReader{
 		ID: id,
 	}
 
@@ -161,7 +161,7 @@ func (r *Reader) ListAllUsers() ([]*resources.User, error) {
 
 // ListAllImages lists all images.
 func (r *Reader) ListAllImages() ([]*resources.Image, error) {
-	or := storage.Reader{}
+	or := storageReader.Reader{}
 
 	res, err := r.readResources(&or)
 	if err != nil {
@@ -195,7 +195,7 @@ func (r *Reader) ListAllHosts() ([]*resources.Host, error) {
 
 // ListAllVirtualNetworks lists all virtual networks by page offset.
 func (r *Reader) ListAllVirtualNetworks(pageOffset int) ([]*resources.VirtualNetwork, error) {
-	or := network.Reader{
+	or := networkReader.Reader{
 		PageOffset: pageOffset,
 	}
 

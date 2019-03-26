@@ -1,4 +1,4 @@
-package virtualMachine
+package reader
 
 import (
 	"context"
