@@ -38,7 +38,7 @@ func (w *Writer) SetUp(conn *grpc.ClientConn) {
 	// create Stream to process VMs
 	stream, err := grpcClient.ProcessVms(context.Background())
 	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("error create gRPC client stream")
+		log.WithFields(log.Fields{"error": err}).Fatal("error create gRPC client stream")
 	}
 
 	w.Stream = stream
