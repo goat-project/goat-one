@@ -1,9 +1,18 @@
 package cmd
 
 import (
+	"time"
+
+	"github.com/goat-project/goat-one/client"
+	"github.com/goat-project/goat-one/filter"
 	"github.com/goat-project/goat-one/logger"
+	"github.com/goat-project/goat-one/preparer"
+	"github.com/goat-project/goat-one/processor"
+	"github.com/goat-project/goat-one/reader"
+	"github.com/goat-project/goat-one/resource/storage"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"golang.org/x/time/rate"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -26,7 +35,10 @@ var storageCmd = &cobra.Command{
 			logFlags(storageFlags)
 		}
 
-		// TODO: do storage stuff here
+		readLimiter := rate.NewLimiter(rate.Every(time.Second/time.Duration(requestsPerSecond)), requestsPerSecond)
+		writeLimiter := rate.NewLimiter(rate.Every(time.Second/time.Duration(requestsPerSecond)), requestsPerSecond)
+
+		accountStorage(readLimiter, writeLimiter)
 	},
 }
 
@@ -35,4 +47,16 @@ func initStorage() {
 
 	// TODO: add new flags
 	// TODO: configure new flags
+}
+
+func accountStorage(readLimiter, writeLimiter *rate.Limiter) {
+	read := reader.CreateReader(readLimiter)
+
+	proc := processor.CreateProcessor(storage.CreateProcessor(read))
+	filt := filter.CreateFilter(storage.CreateFilter())
+	prep := preparer.CreatePreparer(storage.CreatePreparer(writeLimiter))
+
+	c := client.Client{}
+
+	c.Run(proc, filt, prep)
 }
