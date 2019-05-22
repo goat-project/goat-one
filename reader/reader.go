@@ -8,7 +8,7 @@ import (
 	"github.com/goat-project/goat-one/resource"
 	networkReader "github.com/goat-project/goat-one/resource/network/reader"
 	storageReader "github.com/goat-project/goat-one/resource/storage/reader"
-	virtualMachineReader "github.com/goat-project/goat-one/resource/virtualMachine/reader"
+	virtualMachineReader "github.com/goat-project/goat-one/resource/virtualmachine/reader"
 
 	"github.com/onego-project/onego/resources"
 
