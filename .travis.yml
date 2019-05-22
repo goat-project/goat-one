@@ -1,8 +1,8 @@
 language: go
 
 go:
-- 1.10.x
 - 1.11.x
+- 1.12.x
 
 sudo: false
 
@@ -18,9 +18,8 @@ install:
 - dep ensure
 
 before_script:
-- go get -u github.com/alecthomas/gometalinter
-- gometalinter --install
+- go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 
 script:
-- gometalinter ./... --vendor --deadline 100s
+- golangci-lint run ./...
 - go test ./... -v
