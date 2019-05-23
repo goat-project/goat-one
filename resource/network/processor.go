@@ -23,6 +23,25 @@ func CreateProcessor(Reader *reader.Reader) *Processor {
 	}
 }
 
+// Process provides listing of the networks with pagination.
+func (p *Processor) Process(read chan resource.Resource, readDone chan bool, swg *sizedwaitgroup.SizedWaitGroup) {
+	defer swg.Done()
+	pageOffset := 1
+
+processing:
+	for {
+		swg.Add()
+		go p.List(read, readDone, swg, pageOffset)
+		select {
+		case <-readDone:
+			break processing
+		default:
+		}
+
+		pageOffset++
+	}
+}
+
 // List calls method to list virtual networks by page offset.
 func (p *Processor) List(read chan resource.Resource, readDone chan bool, swg *sizedwaitgroup.SizedWaitGroup,
 	pageOffset int) {
