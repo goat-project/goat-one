@@ -2,6 +2,9 @@ package cmd
 
 import (
 	"strings"
+	"time"
+
+	"golang.org/x/time/rate"
 
 	"github.com/goat-project/goat-one/logger"
 
@@ -14,6 +17,8 @@ import (
 )
 
 const version = "1.0.0"
+
+const requestsPerSecond = 30
 
 var goatOneFlags = []string{constants.CfgIdentifier, constants.CfgRecordsFrom, constants.CfgRecordsTo,
 	constants.CfgRecordsForPeriod, constants.CfgEndpoint, constants.CfgOpennebulaEndpoint,
@@ -34,7 +39,13 @@ var goatOneCmd = &cobra.Command{
 			log.WithFields(log.Fields{"version": version}).Debug("goat-one version")
 			logFlags(append(vmFlags, append(networkFlags, storageFlags...)...))
 		}
-		// TODO: do stuff here
+
+		readLimiter := rate.NewLimiter(rate.Every(time.Second/time.Duration(requestsPerSecond)), requestsPerSecond)
+		writeLimiter := rate.NewLimiter(rate.Every(time.Second/time.Duration(requestsPerSecond)), requestsPerSecond)
+
+		accountVM(readLimiter, writeLimiter) // TODO: make accounting parallel
+		accountNetwork(readLimiter, writeLimiter)
+		accountStorage(readLimiter, writeLimiter)
 	},
 }
 

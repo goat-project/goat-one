@@ -1,10 +1,20 @@
 package cmd
 
 import (
+	"time"
+
+	"github.com/goat-project/goat-one/filter"
+
+	"github.com/goat-project/goat-one/client"
 	"github.com/goat-project/goat-one/constants"
 	"github.com/goat-project/goat-one/logger"
+	"github.com/goat-project/goat-one/preparer"
+	"github.com/goat-project/goat-one/processor"
+	"github.com/goat-project/goat-one/reader"
+	"github.com/goat-project/goat-one/resource/virtualmachine"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"golang.org/x/time/rate"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -27,7 +37,10 @@ var vmCmd = &cobra.Command{
 			logFlags(vmFlags)
 		}
 
-		// TODO: do VM stuff here
+		readLimiter := rate.NewLimiter(rate.Every(time.Second/time.Duration(requestsPerSecond)), requestsPerSecond)
+		writeLimiter := rate.NewLimiter(rate.Every(time.Second/time.Duration(requestsPerSecond)), requestsPerSecond)
+
+		accountVM(readLimiter, writeLimiter)
 	},
 }
 
@@ -42,4 +55,16 @@ func initVM() {
 		viper.GetString(constants.CfgCloudComputeService), "cloud compute service [VM_CLOUD_COMPUTE_SERVICE]")
 
 	bindFlags(*vmCmd, vmFlags)
+}
+
+func accountVM(readLimiter, writeLimiter *rate.Limiter) {
+	read := reader.CreateReader(readLimiter)
+
+	proc := processor.CreateProcessor(virtualmachine.CreateProcessor(read))
+	filt := filter.CreateFilter(virtualmachine.CreateFilter())
+	prep := preparer.CreatePreparer(virtualmachine.CreatePreparer(read, writeLimiter))
+
+	c := client.Client{}
+
+	c.Run(proc, filt, prep)
 }
