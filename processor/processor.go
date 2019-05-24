@@ -16,6 +16,7 @@ type Processor struct {
 }
 
 type processorI interface {
+	Process(chan resource.Resource, chan bool, *sizedwaitgroup.SizedWaitGroup)
 	List(chan resource.Resource, chan bool, *sizedwaitgroup.SizedWaitGroup, int)
 	RetrieveInfo(chan resource.Resource, *sync.WaitGroup, resource.Resource)
 }
@@ -31,23 +32,11 @@ func CreateProcessor(proc processorI) *Processor {
 
 // ListResources calls method to list resource from OpenNebula.
 func (p *Processor) ListResources(read chan resource.Resource) {
-	swg := sizedwaitgroup.New(wgSize)
+	swg := sizedwaitgroup.New(wgSize + 1)
 	readDone := make(chan bool, wgSize)
 
-	pageOffset := 1
-
-processing:
-	for {
-		swg.Add()
-		go p.proc.List(read, readDone, &swg, pageOffset)
-		select {
-		case <-readDone:
-			break processing
-		default:
-		}
-
-		pageOffset++
-	}
+	swg.Add()
+	go p.proc.Process(read, readDone, &swg)
 
 	swg.Wait()
 	close(read)
