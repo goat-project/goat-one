@@ -1,5 +1,10 @@
 package constants
 
+// prefix for storage subcommands
+const cfgStoragePrefix = "storage."
+
+// constants for storage subcommand
 const (
-// TODO: add constants for storage flags here
+	// CfgSite represents string of storage site
+	CfgSite = cfgStoragePrefix + "site"
 )
