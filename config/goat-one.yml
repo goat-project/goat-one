@@ -42,3 +42,19 @@ vm:
 
   # virtual machine cloud compute service
   cloud-compute-service:
+
+# Subcommands specific for a network
+network:
+  # site name
+  site-name: goat-network-site-name
+
+  # cloud type
+  cloud-type: goat-network-cloud-type
+
+  # network cloud compute service
+  cloud-compute-service:
+
+# Subcommands specific for a storage
+storage:
+  # site name
+  site:
