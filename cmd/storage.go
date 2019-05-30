@@ -3,6 +3,8 @@ package cmd
 import (
 	"time"
 
+	"github.com/goat-project/goat-one/constants"
+
 	"github.com/goat-project/goat-one/client"
 	"github.com/goat-project/goat-one/filter"
 	"github.com/goat-project/goat-one/logger"
@@ -17,8 +19,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var storageRequired = []string{ /* TODO: add required flags here */ }
-var storageFlags = []string{ /* TODO: add all storage flags here */ }
+var storageRequired = []string{}
+var storageFlags = []string{constants.CfgSite}
 
 var storageCmd = &cobra.Command{
 	Use:   "storage",
@@ -45,8 +47,10 @@ var storageCmd = &cobra.Command{
 func initStorage() {
 	goatOneCmd.AddCommand(storageCmd)
 
-	// TODO: add new flags
-	// TODO: configure new flags
+	storageCmd.PersistentFlags().String(parseFlagName(constants.CfgSite),
+		viper.GetString(constants.CfgSite), "site [SITE]")
+
+	bindFlags(*storageCmd, storageFlags)
 }
 
 func accountStorage(readLimiter, writeLimiter *rate.Limiter) {

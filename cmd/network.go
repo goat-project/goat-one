@@ -3,6 +3,8 @@ package cmd
 import (
 	"time"
 
+	"github.com/goat-project/goat-one/constants"
+
 	"github.com/goat-project/goat-one/filter"
 	"github.com/goat-project/goat-one/preparer"
 	"github.com/goat-project/goat-one/processor"
@@ -18,8 +20,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var networkRequired = []string{ /* TODO: add required flags here */ }
-var networkFlags = []string{ /* TODO: add all network flags here */ }
+var networkRequired = []string{constants.CfgNetworkSiteName, constants.CfgNetworkCloudType}
+var networkFlags = []string{constants.CfgNetworkSiteName, constants.CfgNetworkCloudType,
+	constants.CfgNetworkCloudComputeService}
 
 var networkCmd = &cobra.Command{
 	Use:   "network",
@@ -46,8 +49,15 @@ var networkCmd = &cobra.Command{
 func initNetwork() {
 	goatOneCmd.AddCommand(networkCmd)
 
-	// TODO: add new flags
-	// TODO: configure new flags
+	networkCmd.PersistentFlags().String(parseFlagName(constants.CfgNetworkSiteName),
+		viper.GetString(constants.CfgNetworkSiteName), "site name [NETWORK_SITE_NAME] (required)")
+	networkCmd.PersistentFlags().String(parseFlagName(constants.CfgNetworkCloudType),
+		viper.GetString(constants.CfgNetworkCloudType), "cloud type [NETWORK_CLOUD_TYPE] (required)")
+	networkCmd.PersistentFlags().String(parseFlagName(constants.CfgNetworkCloudComputeService),
+		viper.GetString(constants.CfgNetworkCloudComputeService),
+		"cloud compute service [NETWORK_CLOUD_COMPUTE_SERVICE]")
+
+	bindFlags(*networkCmd, networkFlags)
 }
 
 func accountNetwork(readLimiter, writeLimiter *rate.Limiter) {
