@@ -2,10 +2,11 @@ package virtualmachine
 
 import (
 	"fmt"
-	"net"
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/goat-project/goat-one/util"
 
 	"github.com/goat-project/goat-one/resource"
 
@@ -17,7 +18,6 @@ import (
 
 	"github.com/goat-project/goat-one/constants"
 
-	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/duration"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/golang/protobuf/ptypes/wrappers"
@@ -321,7 +321,7 @@ func getSiteName() string {
 }
 
 func getCloudComputeService() *wrappers.StringValue {
-	return checkValueErrStr(viper.GetString(constants.CfgCloudComputeService), nil)
+	return util.CheckValueErrStr(viper.GetString(constants.CfgCloudComputeService), nil)
 }
 
 func getMachineName(vm *resources.VirtualMachine) (string, error) {
@@ -334,11 +334,11 @@ func getMachineName(vm *resources.VirtualMachine) (string, error) {
 }
 
 func getLocalUserID(vm *resources.VirtualMachine) *wrappers.StringValue {
-	return checkValueErrInt(vm.User())
+	return util.CheckValueErrInt(vm.User())
 }
 
 func getLocalGroupID(vm *resources.VirtualMachine) *wrappers.StringValue {
-	return checkValueErrInt(vm.Group())
+	return util.CheckValueErrInt(vm.Group())
 }
 
 // TODO fix to string (in proto) - global user name is required
@@ -373,7 +373,7 @@ func getStatus(vm *resources.VirtualMachine) *wrappers.StringValue {
 }
 
 func getStartTime(vm *resources.VirtualMachine) (*timestamp.Timestamp, error) {
-	ts, err := checkTime(vm.STime())
+	ts, err := util.CheckTime(vm.STime())
 	if err != nil {
 		return nil, err
 	}
@@ -382,7 +382,7 @@ func getStartTime(vm *resources.VirtualMachine) (*timestamp.Timestamp, error) {
 }
 
 func getEndTime(vm *resources.VirtualMachine) *timestamp.Timestamp {
-	ts, err := checkTime(vm.ETime())
+	ts, err := util.CheckTime(vm.ETime())
 	if err != nil {
 		log.WithFields(log.Fields{"error": err}).Error("error get end time")
 		return nil
@@ -447,11 +447,11 @@ func getNetworkType() *wrappers.StringValue {
 }
 
 func getNetworkInbound(vm *resources.VirtualMachine) *wrappers.UInt64Value {
-	return checkErrUint64(vm.Attribute("MONITORING/NETTX"))
+	return util.CheckErrUint64(vm.Attribute("MONITORING/NETTX"))
 }
 
 func getNetworkOutbound(vm *resources.VirtualMachine) *wrappers.UInt64Value {
-	return checkErrUint64(vm.Attribute("MONITORING/NETRX"))
+	return util.CheckErrUint64(vm.Attribute("MONITORING/NETRX"))
 }
 
 func getPublicIPCount(vm *resources.VirtualMachine) *wrappers.UInt64Value {
@@ -462,7 +462,7 @@ func getPublicIPCount(vm *resources.VirtualMachine) *wrappers.UInt64Value {
 
 	var count uint64
 	for _, nic := range nics {
-		if isPublicIPv4(nic.IP) || nic.IP6Global != nil {
+		if util.IsPublicIPv4(nic.IP) || nic.IP6Global != nil {
 			count++
 		}
 	}
@@ -471,7 +471,7 @@ func getPublicIPCount(vm *resources.VirtualMachine) *wrappers.UInt64Value {
 }
 
 func getMemory(vm *resources.VirtualMachine) *wrappers.UInt64Value {
-	return checkErrUint64(vm.Attribute("TEMPLATE/MEMORY"))
+	return util.CheckErrUint64(vm.Attribute("TEMPLATE/MEMORY"))
 }
 
 func getDiskSizes(vm *resources.VirtualMachine) *wrappers.UInt64Value {
@@ -535,65 +535,4 @@ func getCloudType() *wrappers.StringValue {
 	}
 
 	return &wrappers.StringValue{Value: ct}
-}
-
-func checkValueErrInt(value int, err error) *wrappers.StringValue {
-	return checkValueErrStr(fmt.Sprint(value), err)
-}
-
-func checkValueErrStr(value string, err error) *wrappers.StringValue {
-	if err == nil && value != "" {
-		return &wrappers.StringValue{Value: value}
-	}
-
-	return nil
-}
-
-func checkErrUint64(value string, err error) *wrappers.UInt64Value {
-	if err == nil && value != "" {
-		var i uint64
-		i, err = strconv.ParseUint(value, 10, 64)
-		if err == nil {
-			return &wrappers.UInt64Value{Value: i}
-		}
-	}
-
-	return nil
-}
-
-func checkTime(t *time.Time, err error) (*timestamp.Timestamp, error) {
-	if err == nil && t != nil {
-		var ts *timestamp.Timestamp
-		ts, err = ptypes.TimestampProto(*t)
-		if err == nil {
-			return ts, nil
-		}
-	}
-
-	return nil, err
-}
-
-func isPublicIPv4(ip net.IP) bool {
-	if ip == nil {
-		return false
-	}
-
-	if ip.IsLoopback() || ip.IsLinkLocalMulticast() || ip.IsLinkLocalUnicast() {
-		return false
-	}
-
-	if ip4 := ip.To4(); ip4 != nil {
-		switch true {
-		case ip4[0] == 10:
-			return false
-		case ip4[0] == 172 && ip4[1] >= 16 && ip4[1] <= 31:
-			return false
-		case ip4[0] == 192 && ip4[1] == 168:
-			return false
-		default:
-			return true
-		}
-	}
-
-	return false
 }
