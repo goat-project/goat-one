@@ -39,6 +39,10 @@ type resourceReaderI interface {
 	ReadResource(context.Context, *onego.Client) (resource.Resource, error)
 }
 
+type resourcesReaderForUserI interface {
+	ReadResourcesForUser(context.Context, *onego.Client) ([]resource.Resource, error)
+}
+
 const attempts = 3
 const sleepTime = time.Second * 1
 
@@ -109,6 +113,29 @@ func (r *Reader) readResource(rri resourceReaderI) (resource.Resource, error) {
 	return res, err
 }
 
+func (r *Reader) readResourcesForUser(rri resourcesReaderForUserI) ([]resource.Resource, error) {
+	var res []resource.Resource
+	var err error
+
+	err = retry.Do(func() error {
+		if err = r.rateLimiter.Wait(context.Background()); err != nil {
+			log.WithFields(log.Fields{"error": err}).Fatal("error list resources")
+		}
+
+		ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
+		defer cancel()
+
+		res, err = rri.ReadResourcesForUser(ctx, r.client)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	}, attempts, sleepTime)
+
+	return res, err
+}
+
 // ListAllVirtualMachines lists all virtual machines by page offset.
 func (r *Reader) ListAllVirtualMachines(pageOffset int) ([]*resources.VirtualMachine, error) {
 	vmr := virtualMachineReader.VMsReader{
@@ -116,6 +143,25 @@ func (r *Reader) ListAllVirtualMachines(pageOffset int) ([]*resources.VirtualMac
 	}
 
 	res, err := r.readResources(&vmr)
+	if err != nil {
+		return nil, err
+	}
+
+	vms := make([]*resources.VirtualMachine, len(res))
+	for i, e := range res {
+		vms[i] = e.(*resources.VirtualMachine)
+	}
+
+	return vms, err
+}
+
+// ListAllActiveVirtualMachinesForUser lists all virtual machines by page offset specific for a user given by id.
+func (r *Reader) ListAllActiveVirtualMachinesForUser(userID int) ([]*resources.VirtualMachine, error) {
+	vnr := networkReader.VMReader{
+		User: resources.CreateUserWithID(userID),
+	}
+
+	res, err := r.readResourcesForUser(&vnr)
 	if err != nil {
 		return nil, err
 	}
