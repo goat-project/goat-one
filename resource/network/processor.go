@@ -5,6 +5,7 @@ import (
 
 	"github.com/goat-project/goat-one/reader"
 	"github.com/goat-project/goat-one/resource"
+	"github.com/onego-project/onego/resources"
 
 	"github.com/remeh/sizedwaitgroup"
 
@@ -16,6 +17,12 @@ type Processor struct {
 	reader reader.Reader
 }
 
+// NetUser represents "Resource" with information about user and his active virtual machines.
+type NetUser struct {
+	User                  *resources.User
+	ActiveVirtualMachines []*resources.VirtualMachine
+}
+
 // CreateProcessor creates Processor to manage reading from OpenNebula.
 func CreateProcessor(Reader *reader.Reader) *Processor {
 	return &Processor{
@@ -23,48 +30,52 @@ func CreateProcessor(Reader *reader.Reader) *Processor {
 	}
 }
 
-// Process provides listing of the networks with pagination.
+// Process provides listing of the users.
 func (p *Processor) Process(read chan resource.Resource, readDone chan bool, swg *sizedwaitgroup.SizedWaitGroup) {
 	defer swg.Done()
-	pageOffset := 1
 
-processing:
-	for {
-		swg.Add()
-		go p.List(read, readDone, swg, pageOffset)
-		select {
-		case <-readDone:
-			break processing
-		default:
-		}
-
-		pageOffset++
-	}
+	swg.Add()
+	go p.List(read, readDone, swg, 0)
 }
 
-// List calls method to list virtual networks by page offset.
-func (p *Processor) List(read chan resource.Resource, readDone chan bool, swg *sizedwaitgroup.SizedWaitGroup,
-	pageOffset int) {
+// List calls method to list all users.
+func (p *Processor) List(read chan resource.Resource, _ chan bool, swg *sizedwaitgroup.SizedWaitGroup,
+	_ int) {
 	defer swg.Done()
 
-	vnets, err := p.reader.ListAllVirtualNetworks(pageOffset)
+	users, err := p.reader.ListAllUsers()
 	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Fatal("error list networks")
+		log.WithFields(log.Fields{"error": err}).Fatal("error list users")
 	}
 
-	if len(vnets) == 0 {
-		readDone <- true
-		return
-	}
-
-	for _, v := range vnets {
-		read <- v
+	for _, user := range users {
+		read <- user
 	}
 }
 
-// RetrieveInfo - only for VM relevant.
-func (p *Processor) RetrieveInfo(fullInfo chan resource.Resource, wg *sync.WaitGroup, vnet resource.Resource) {
+// RetrieveInfo about virtual machines specific for a given user.
+func (p *Processor) RetrieveInfo(fullInfo chan resource.Resource, wg *sync.WaitGroup, user resource.Resource) {
 	defer wg.Done()
 
-	fullInfo <- vnet
+	id, err := user.ID()
+	if err != nil {
+		log.WithFields(log.Fields{"error": err}).Fatal("error get user id")
+	}
+
+	vms, err := p.reader.ListAllActiveVirtualMachinesForUser(id)
+	if err != nil {
+		log.WithFields(log.Fields{"error": err, "userID": id}).Fatal("error retrieve virtual machines for user")
+	}
+
+	if len(vms) != 0 {
+		fullInfo <- &NetUser{
+			User:                  user.(*resources.User),
+			ActiveVirtualMachines: vms,
+		}
+	}
+}
+
+// ID gets user ID - relevant method to implement "Resource".
+func (vnu *NetUser) ID() (int, error) {
+	return vnu.User.ID()
 }
