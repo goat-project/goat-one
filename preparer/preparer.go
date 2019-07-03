@@ -48,8 +48,11 @@ func (p *Preparer) Prepare(fullInfo chan resource.Resource, done chan bool, mapW
 
 	wg.Wait()
 
-	// finish and close connection
-	p.prep.Finish()
+	// If the identifier was not sent, there is no resource to prepare and send,
+	// a gRPC connection was not open and no finishing and closing of a connection are needed.
+	if identifierSend {
+		p.prep.Finish()
+	}
 
 	done <- true
 }
