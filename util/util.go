@@ -11,10 +11,12 @@ import (
 	"github.com/golang/protobuf/ptypes/wrappers"
 )
 
+// CheckValueErrInt function returns nil when an error occurred otherwise returns value in wrappers.StringValue format.
 func CheckValueErrInt(value int, err error) *wrappers.StringValue {
 	return CheckValueErrStr(fmt.Sprint(value), err)
 }
 
+// CheckValueErrStr function returns nil when an error occurred otherwise returns value in wrappers.StringValue format.
 func CheckValueErrStr(value string, err error) *wrappers.StringValue {
 	if err == nil && value != "" {
 		return &wrappers.StringValue{Value: value}
@@ -23,6 +25,7 @@ func CheckValueErrStr(value string, err error) *wrappers.StringValue {
 	return nil
 }
 
+// CheckErrUint64 function returns nil when an error occurred otherwise returns value in wrappers.UInt64Value format.
 func CheckErrUint64(value string, err error) *wrappers.UInt64Value {
 	if err == nil && value != "" {
 		var i uint64
@@ -35,6 +38,7 @@ func CheckErrUint64(value string, err error) *wrappers.UInt64Value {
 	return nil
 }
 
+// CheckTime function returns nil and error when an error occurred otherwise returns time in timestamp.Timestamp format.
 func CheckTime(t *time.Time, err error) (*timestamp.Timestamp, error) {
 	if err == nil && t != nil {
 		var ts *timestamp.Timestamp
@@ -47,6 +51,7 @@ func CheckTime(t *time.Time, err error) (*timestamp.Timestamp, error) {
 	return nil, err
 }
 
+// IsPublicIPv4 function returns true when IP is public IPv4 otherwise returns false.
 func IsPublicIPv4(ip net.IP) bool {
 	if ip == nil {
 		return false
