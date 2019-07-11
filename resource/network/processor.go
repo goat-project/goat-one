@@ -79,3 +79,8 @@ func (p *Processor) RetrieveInfo(fullInfo chan resource.Resource, wg *sync.WaitG
 func (vnu *NetUser) ID() (int, error) {
 	return vnu.User.ID()
 }
+
+// Attribute gets user attribute given by path - relevant method to implement "Resource".
+func (vnu *NetUser) Attribute(path string) (string, error) {
+	return vnu.User.Attribute(path)
+}

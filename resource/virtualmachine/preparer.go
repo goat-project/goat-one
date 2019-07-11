@@ -6,6 +6,8 @@ import (
 	"sync"
 	"time"
 
+	"github.com/goat-project/goat-one/initialization"
+
 	"github.com/goat-project/goat-one/util"
 
 	"github.com/goat-project/goat-one/resource"
@@ -41,11 +43,6 @@ type Preparer struct {
 	hostTemplateBenchmarkValue             map[int]string
 }
 
-type benchmark struct {
-	bType  string
-	bValue string
-}
-
 // CreatePreparer creates Preparer for virtual machine records.
 func CreatePreparer(reader *reader.Reader, limiter *rate.Limiter) *Preparer {
 	return &Preparer{
@@ -55,156 +52,31 @@ func CreatePreparer(reader *reader.Reader, limiter *rate.Limiter) *Preparer {
 }
 
 // InitializeMaps reads additional data for virtual machine record.
-func (p *Preparer) InitializeMaps(mapWg *sync.WaitGroup) {
-	defer mapWg.Done()
+func (p *Preparer) InitializeMaps(wg *sync.WaitGroup) {
+	defer wg.Done()
 
-	mapWg.Add(3)
-	go p.initializeUserTemplateIdentity(mapWg)
-	go p.initializeImageTemplateCloudkeeperApplianceMpuri(mapWg)
-	go p.initializeHostTemplateBenchmark(mapWg)
+	wg.Add(3)
+	go p.initializeUserTemplateIdentity(wg)
+	go p.initializeImageTemplateCloudkeeperApplianceMpuri(wg)
+	go p.initializeHostTemplateBenchmark(wg)
 }
 
-func (p *Preparer) initializeUserTemplateIdentity(mapWg *sync.WaitGroup) {
-	defer mapWg.Done()
+func (p *Preparer) initializeUserTemplateIdentity(wg *sync.WaitGroup) {
+	defer wg.Done()
 
-	users, err := p.reader.ListAllUsers()
-	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("error list all users")
-		return
-	}
-
-	p.userTemplateIdentity = make(map[int]string, len(users))
-
-	for _, user := range users {
-		id, err := user.ID()
-		if err != nil {
-			log.WithFields(log.Fields{"error": err}).Error("error get user ID")
-			continue
-		}
-
-		str, err := user.Attribute(constants.TemplateIdentity)
-		if err != nil {
-			str = strconv.Itoa(id)
-		}
-
-		p.userTemplateIdentity[id] = str
-	}
+	p.userTemplateIdentity = initialization.InitializeUserTemplateIdentity(p.reader)
 }
 
-func (p *Preparer) initializeImageTemplateCloudkeeperApplianceMpuri(mapWg *sync.WaitGroup) {
-	defer mapWg.Done()
+func (p *Preparer) initializeImageTemplateCloudkeeperApplianceMpuri(wg *sync.WaitGroup) {
+	defer wg.Done()
 
-	images, err := p.reader.ListAllImages()
-	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("error list all images")
-		return
-	}
-
-	p.imageTemplateCloudkeeperApplianceMpuri = make(map[int]string, len(images))
-
-	for _, image := range images {
-		id, err := image.ID()
-		if err != nil {
-			log.WithFields(log.Fields{"error": err}).Error("error get image ID")
-			continue
-		}
-
-		str, err := image.Attribute(constants.TemplateCloudkeeperApplianceMpuri)
-		if err != nil {
-			str = strconv.Itoa(id)
-		}
-
-		p.imageTemplateCloudkeeperApplianceMpuri[id] = str
-	}
+	p.imageTemplateCloudkeeperApplianceMpuri = initialization.InitializeImageTemplateCloudkeeperApplianceMpuri(p.reader)
 }
 
-func (p *Preparer) initializeHostTemplateBenchmark(mapWg *sync.WaitGroup) {
-	defer mapWg.Done()
+func (p *Preparer) initializeHostTemplateBenchmark(wg *sync.WaitGroup) {
+	defer wg.Done()
 
-	hosts, err := p.reader.ListAllHosts()
-	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("error list all hosts")
-		return
-	}
-
-	clustersMap := p.clustersMap()
-
-	hostLength := len(hosts)
-	p.hostTemplateBenchmarkType = make(map[int]string, hostLength)
-	p.hostTemplateBenchmarkValue = make(map[int]string, hostLength)
-
-	for _, host := range hosts {
-		id, err := host.ID()
-		if err != nil {
-			log.WithFields(log.Fields{"error": err}).Error("error get host ID")
-			continue
-		}
-
-		bType, err := host.Attribute(constants.TemplateBenchmarkType)
-		if err != nil {
-			bType = p.typeFromCluster(clustersMap, host)
-		}
-
-		p.hostTemplateBenchmarkType[id] = bType
-
-		bValue, err := host.Attribute(constants.TemplateBenchmarkValue)
-		if err != nil {
-			bValue = p.valueFromCluster(clustersMap, host)
-		}
-
-		p.hostTemplateBenchmarkValue[id] = bValue
-	}
-}
-
-func (p *Preparer) valueFromCluster(clustersMap map[int]benchmark, host *resources.Host) string {
-	clusterID, err := host.Cluster()
-	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("error get cluster ID from host")
-		return ""
-	}
-
-	return clustersMap[clusterID].bValue
-}
-
-func (p *Preparer) typeFromCluster(clustersMap map[int]benchmark, host *resources.Host) string {
-	clusterID, err := host.Cluster()
-	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("error get cluster ID from host")
-		return ""
-	}
-
-	return clustersMap[clusterID].bType
-}
-
-func (p *Preparer) clustersMap() map[int]benchmark {
-	clusters, err := p.reader.ListAllClusters()
-	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Fatal("error list all clusters")
-	}
-
-	idToBenchmark := make(map[int]benchmark, len(clusters))
-
-	for _, cluster := range clusters {
-		id, err := cluster.ID()
-		if err != nil {
-			log.WithFields(log.Fields{"error": err}).Error("error get cluster ID")
-			continue
-		}
-
-		bType, err := cluster.Attribute(constants.TemplateBenchmarkType)
-		if err != nil {
-			log.WithFields(log.Fields{"error": err, "cluster": id}).Warn("couldn't get benchmark type from cluster")
-		}
-
-		bValue, err := cluster.Attribute(constants.TemplateBenchmarkValue)
-		if err != nil {
-			log.WithFields(log.Fields{"error": err, "cluster": id}).Warn("couldn't get benchmark value from cluster")
-		}
-
-		idToBenchmark[id] = benchmark{bType: bType, bValue: bValue}
-	}
-
-	return idToBenchmark
+	p.hostTemplateBenchmarkType, p.hostTemplateBenchmarkType = initialization.InitializeHostTemplateBenchmark(p.reader)
 }
 
 // Preparation prepares virtual machine data for writing and call method to write.
