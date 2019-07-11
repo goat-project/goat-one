@@ -28,8 +28,6 @@ type Preparer struct {
 	Writer writer.Writer
 }
 
-const templateIdentity = "TEMPLATE/IDENTITY"
-
 // CreatePreparer creates Preparer for network records.
 func CreatePreparer(limiter *rate.Limiter) *Preparer {
 	return &Preparer{
@@ -163,7 +161,7 @@ func createIPRecord(netUser NetUser, ipType string, ipCount uint32) (*pb.IpRecor
 		return nil, err
 	}
 
-	globalUserName, err := netUser.User.Attribute(templateIdentity)
+	globalUserName, err := netUser.User.Attribute(constants.TemplateIdentity)
 	if err != nil {
 		globalUserName = strconv.Itoa(id)
 	}
