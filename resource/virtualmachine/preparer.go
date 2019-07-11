@@ -41,13 +41,6 @@ type Preparer struct {
 	hostTemplateBenchmarkValue             map[int]string
 }
 
-const (
-	templateIdentity                  = "TEMPLATE/IDENTITY"
-	templateCloudkeeperApplianceMpuri = "TEMPLATE/CLOUDKEEPER_APPLIANCE_MPURI"
-	templateBenchmarkType             = "TEMPLATE/BENCHMARK_TYPE"
-	templateBenchmarkValue            = "TEMPLATE/BENCHMARK_VALUE"
-)
-
 type benchmark struct {
 	bType  string
 	bValue string
@@ -89,7 +82,7 @@ func (p *Preparer) initializeUserTemplateIdentity(mapWg *sync.WaitGroup) {
 			continue
 		}
 
-		str, err := user.Attribute(templateIdentity)
+		str, err := user.Attribute(constants.TemplateIdentity)
 		if err != nil {
 			str = strconv.Itoa(id)
 		}
@@ -116,7 +109,7 @@ func (p *Preparer) initializeImageTemplateCloudkeeperApplianceMpuri(mapWg *sync.
 			continue
 		}
 
-		str, err := image.Attribute(templateCloudkeeperApplianceMpuri)
+		str, err := image.Attribute(constants.TemplateCloudkeeperApplianceMpuri)
 		if err != nil {
 			str = strconv.Itoa(id)
 		}
@@ -147,14 +140,14 @@ func (p *Preparer) initializeHostTemplateBenchmark(mapWg *sync.WaitGroup) {
 			continue
 		}
 
-		bType, err := host.Attribute(templateBenchmarkType)
+		bType, err := host.Attribute(constants.TemplateBenchmarkType)
 		if err != nil {
 			bType = p.typeFromCluster(clustersMap, host)
 		}
 
 		p.hostTemplateBenchmarkType[id] = bType
 
-		bValue, err := host.Attribute(templateBenchmarkValue)
+		bValue, err := host.Attribute(constants.TemplateBenchmarkValue)
 		if err != nil {
 			bValue = p.valueFromCluster(clustersMap, host)
 		}
@@ -198,12 +191,12 @@ func (p *Preparer) clustersMap() map[int]benchmark {
 			continue
 		}
 
-		bType, err := cluster.Attribute(templateBenchmarkType)
+		bType, err := cluster.Attribute(constants.TemplateBenchmarkType)
 		if err != nil {
 			log.WithFields(log.Fields{"error": err, "cluster": id}).Warn("couldn't get benchmark type from cluster")
 		}
 
-		bValue, err := cluster.Attribute(templateBenchmarkValue)
+		bValue, err := cluster.Attribute(constants.TemplateBenchmarkValue)
 		if err != nil {
 			log.WithFields(log.Fields{"error": err, "cluster": id}).Warn("couldn't get benchmark value from cluster")
 		}
