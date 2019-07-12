@@ -56,27 +56,21 @@ func (p *Preparer) InitializeMaps(wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	wg.Add(3)
-	go p.initializeUserTemplateIdentity(wg)
-	go p.initializeImageTemplateCloudkeeperApplianceMpuri(wg)
-	go p.initializeHostTemplateBenchmark(wg)
-}
 
-func (p *Preparer) initializeUserTemplateIdentity(wg *sync.WaitGroup) {
-	defer wg.Done()
+	go func() {
+		defer wg.Done()
+		p.userTemplateIdentity = initialization.InitializeUserTemplateIdentity(p.reader)
+	}()
 
-	p.userTemplateIdentity = initialization.InitializeUserTemplateIdentity(p.reader)
-}
+	go func() {
+		defer wg.Done()
+		p.imageTemplateCloudkeeperApplianceMpuri = initialization.InitializeImageTemplateCloudkeeperApplianceMpuri(p.reader)
+	}()
 
-func (p *Preparer) initializeImageTemplateCloudkeeperApplianceMpuri(wg *sync.WaitGroup) {
-	defer wg.Done()
-
-	p.imageTemplateCloudkeeperApplianceMpuri = initialization.InitializeImageTemplateCloudkeeperApplianceMpuri(p.reader)
-}
-
-func (p *Preparer) initializeHostTemplateBenchmark(wg *sync.WaitGroup) {
-	defer wg.Done()
-
-	p.hostTemplateBenchmarkType, p.hostTemplateBenchmarkType = initialization.InitializeHostTemplateBenchmark(p.reader)
+	go func() {
+		defer wg.Done()
+		p.hostTemplateBenchmarkType, p.hostTemplateBenchmarkType = initialization.InitializeHostTemplateBenchmark(p.reader)
+	}()
 }
 
 // Preparation prepares virtual machine data for writing and call method to write.
