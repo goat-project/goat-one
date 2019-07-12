@@ -176,5 +176,5 @@ func getResourceCapacityUsed(storage *resources.Image) (uint64, error) {
 		return 0, err
 	}
 
-	return uint64(size * 1024), nil
+	return uint64(size * 1024 * 1024), nil
 }
