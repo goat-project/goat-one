@@ -3,6 +3,9 @@ package storage
 import (
 	"sync"
 
+	"github.com/goat-project/goat-one/initialization"
+
+	"github.com/goat-project/goat-one/reader"
 	"github.com/goat-project/goat-one/resource"
 	"github.com/goat-project/goat-one/writer"
 
@@ -18,19 +21,31 @@ import (
 
 // Preparer to prepare storage data to specific structure for writing to Goat server.
 type Preparer struct {
-	Writer writer.Writer
+	reader               reader.Reader
+	Writer               writer.Writer
+	userTemplateIdentity map[int]string
 }
 
 // CreatePreparer creates Preparer for storage records.
-func CreatePreparer(limiter *rate.Limiter) *Preparer {
+func CreatePreparer(reader *reader.Reader, limiter *rate.Limiter) *Preparer {
 	return &Preparer{
+		reader: *reader,
 		Writer: *writer.CreateWriter(CreateWriter(limiter)),
 	}
 }
 
-// InitializeMaps - only for VM relevant.
+// InitializeMaps reads additional data for storage record.
 func (p *Preparer) InitializeMaps(wg *sync.WaitGroup) {
 	defer wg.Done()
+
+	wg.Add(1)
+	go p.initializeUserTemplateIdentity(wg)
+}
+
+func (p *Preparer) initializeUserTemplateIdentity(wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	p.userTemplateIdentity = initialization.InitializeUserTemplateIdentity(p.reader)
 }
 
 // Preparation prepares storage data for writing and call method to write.

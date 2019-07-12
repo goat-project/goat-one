@@ -58,7 +58,7 @@ func accountStorage(readLimiter, writeLimiter *rate.Limiter) {
 
 	proc := processor.CreateProcessor(storage.CreateProcessor(read))
 	filt := filter.CreateFilter(storage.CreateFilter())
-	prep := preparer.CreatePreparer(storage.CreatePreparer(writeLimiter))
+	prep := preparer.CreatePreparer(storage.CreatePreparer(read, writeLimiter))
 
 	c := client.Client{}
 
