@@ -2,24 +2,39 @@
 
 
 [[projects]]
+  digest = "1:bd8bc15ce3a9929e2777651cbc271fca5561c0d5f42187edb4720e638d24662d"
   name = "github.com/beevik/etree"
   packages = ["."]
+  pruneopts = "UT"
   revision = "8aee6516be3b1163bb6450c35c50e4969e3a3aa8"
   version = "v1.1.0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:b8d62e830679e3d46e598cf2602cc5e87e5b812264507a3d1a5f1c9e96df7b82"
+  name = "github.com/beevik/guid"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "d0ea8faecee03ccdfb5ab8322d5d9037bb7af438"
+
+[[projects]]
+  digest = "1:abeb38ade3f32a92943e5be54f55ed6d6e3b6602761d74b4aab4c9dd45c18abd"
   name = "github.com/fsnotify/fsnotify"
   packages = ["."]
+  pruneopts = "UT"
   revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
   version = "v1.4.7"
 
 [[projects]]
   branch = "master"
+  digest = "1:30e90851c7306f8243916c401e18a8535cbfc1f11e34d75f0243602f4191ba53"
   name = "github.com/goat-project/goat-proto-go"
   packages = ["."]
+  pruneopts = "UT"
   revision = "f24ada67b5ee93ea6aa3233f018a1e7dfa0ef89c"
 
 [[projects]]
+  digest = "1:3726528864bb82e7a0ea6336a0db2e656d79c1bf032b5cf4b7ca83fcb2703e68"
   name = "github.com/golang/protobuf"
   packages = [
     "proto",
@@ -28,12 +43,14 @@
     "ptypes/duration",
     "ptypes/empty",
     "ptypes/timestamp",
-    "ptypes/wrappers"
+    "ptypes/wrappers",
   ]
+  pruneopts = "UT"
   revision = "b5d812f8a3706043e23a9cd5babf2e5423744d30"
   version = "v1.3.1"
 
 [[projects]]
+  digest = "1:c0d19ab64b32ce9fe5cf4ddceba78d5bc9807f0016db6b1183599da3dcc24d10"
   name = "github.com/hashicorp/hcl"
   packages = [
     ".",
@@ -45,36 +62,54 @@
     "hcl/token",
     "json/parser",
     "json/scanner",
-    "json/token"
+    "json/token",
   ]
+  pruneopts = "UT"
   revision = "8cb6e5b959231cc1119e43259c4a608f9c51a241"
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:870d441fe217b8e689d7949fef6e43efbc787e50f200cb1e70dbca9204a1d6be"
   name = "github.com/inconshreveable/mousetrap"
   packages = ["."]
+  pruneopts = "UT"
   revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
   version = "v1.0"
 
 [[projects]]
+  digest = "1:36f328c564dbd1899756183cf040b0cb27f0db423e3faf6c2909e5cb17fb6d68"
+  name = "github.com/karrick/tparse"
+  packages = ["v2"]
+  pruneopts = "UT"
+  revision = "01217819bead9d238dc62e8a054ca09486e2c1a1"
+  version = "v2.6.1"
+
+[[projects]]
+  digest = "1:31e761d97c76151dde79e9d28964a812c46efc5baee4085b86f68f0c654450de"
   name = "github.com/konsorten/go-windows-terminal-sequences"
   packages = ["."]
+  pruneopts = "UT"
   revision = "f55edac94c9bbba5d6182a4be46d86a2c9b5b50e"
   version = "v1.0.2"
 
 [[projects]]
+  digest = "1:c568d7727aa262c32bdf8a3f7db83614f7af0ed661474b24588de635c20024c7"
   name = "github.com/magiconair/properties"
   packages = ["."]
+  pruneopts = "UT"
   revision = "c2353362d570a7bfa228149c62842019201cfb71"
   version = "v1.8.0"
 
 [[projects]]
+  digest = "1:53bc4cd4914cd7cd52139990d5170d6dc99067ae31c56530621b18b35fc30318"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
+  pruneopts = "UT"
   revision = "3536a929edddb9a5b34bd6861dc4a9647cb459fe"
   version = "v1.1.2"
 
 [[projects]]
+  digest = "1:bd1a3b3df082057a86246c3b5d6f99db0aeff0d7ce68918c2fe6682f93ee78e3"
   name = "github.com/onego-project/onego"
   packages = [
     ".",
@@ -82,88 +117,114 @@
     "errors",
     "requests",
     "resources",
-    "services"
+    "services",
   ]
+  pruneopts = "UT"
   revision = "de10f44096d2ae5cf10b4901a44297476c672561"
   version = "v1.1.0"
 
 [[projects]]
+  digest = "1:f6f9214328c548be9aa85717f28c60206792b7ae8e6754315c3b56db4cc0f571"
   name = "github.com/onego-project/xmlrpc"
   packages = ["."]
+  pruneopts = "UT"
   revision = "5432e4ae65575e71c6cbf2a5724e7b12f8f8ecc6"
   version = "v1.1.0"
 
 [[projects]]
+  digest = "1:95741de3af260a92cc5c7f3f3061e85273f5a81b5db20d4bd68da74bd521675e"
   name = "github.com/pelletier/go-toml"
   packages = ["."]
+  pruneopts = "UT"
   revision = "c01d1270ff3e442a8a57cddc1c92dc1138598194"
   version = "v1.2.0"
 
 [[projects]]
+  digest = "1:cf31692c14422fa27c83a05292eb5cbe0fb2775972e8f1f8446a71549bd8980b"
   name = "github.com/pkg/errors"
   packages = ["."]
+  pruneopts = "UT"
   revision = "ba968bfe8b2f7e042a574c888954fccecfa385b4"
   version = "v0.8.1"
 
 [[projects]]
+  digest = "1:e65b85a32c2aaf1fefbc03721573929fe08cfc0198f63167b56aaa19c27a1fb1"
   name = "github.com/rafaeljesus/retry-go"
   packages = ["."]
+  pruneopts = "UT"
   revision = "5981a380a87925ee03a78a7ff13574fabc804837"
   version = "1.0.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:bb90467981c5e812c4d1c78e498a1416b04cb5149dc5fa2200ab758c37488f6f"
   name = "github.com/remeh/sizedwaitgroup"
   packages = ["."]
+  pruneopts = "UT"
   revision = "5e7302b12ccef91dce9fde2f5bda6d5c7ea5d2eb"
 
 [[projects]]
+  digest = "1:fd61cf4ae1953d55df708acb6b91492d538f49c305b364a014049914495db426"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
+  pruneopts = "UT"
   revision = "8bdbc7bcc01dcbb8ec23dc8a28e332258d25251f"
   version = "v1.4.1"
 
 [[projects]]
+  digest = "1:3e39bafd6c2f4bf3c76c3bfd16a2e09e016510ad5db90dc02b88e2f565d6d595"
   name = "github.com/spf13/afero"
   packages = [
     ".",
-    "mem"
+    "mem",
   ]
+  pruneopts = "UT"
   revision = "f4711e4db9e9a1d3887343acb72b2bbfc2f686f5"
   version = "v1.2.1"
 
 [[projects]]
+  digest = "1:08d65904057412fc0270fc4812a1c90c594186819243160dc779a402d4b6d0bc"
   name = "github.com/spf13/cast"
   packages = ["."]
+  pruneopts = "UT"
   revision = "8c9545af88b134710ab1cd196795e7f2388358d7"
   version = "v1.3.0"
 
 [[projects]]
+  digest = "1:645cabccbb4fa8aab25a956cbcbdf6a6845ca736b2c64e197ca7cbb9d210b939"
   name = "github.com/spf13/cobra"
   packages = ["."]
+  pruneopts = "UT"
   revision = "ef82de70bb3f60c65fb8eebacbb2d122ef517385"
   version = "v0.0.3"
 
 [[projects]]
+  digest = "1:68ea4e23713989dc20b1bded5d9da2c5f9be14ff9885beef481848edd18c26cb"
   name = "github.com/spf13/jwalterweatherman"
   packages = ["."]
+  pruneopts = "UT"
   revision = "4a4406e478ca629068e7768fc33f3f044173c0a6"
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:c1b1102241e7f645bc8e0c22ae352e8f0dc6484b6cb4d132fa9f24174e0119e2"
   name = "github.com/spf13/pflag"
   packages = ["."]
+  pruneopts = "UT"
   revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
   version = "v1.0.3"
 
 [[projects]]
+  digest = "1:de37e343c64582d7026bf8ab6ac5b22a72eac54f3a57020db31524affed9f423"
   name = "github.com/spf13/viper"
   packages = ["."]
+  pruneopts = "UT"
   revision = "6d33b5a963d922d182c91e8a1c88d81fd150cfd4"
   version = "v1.3.1"
 
 [[projects]]
   branch = "master"
+  digest = "1:a7550c619a7f9701bc2f0b2c866668a207cfb693a2834796f723d2c78b514372"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -172,17 +233,21 @@
     "http2/hpack",
     "idna",
     "internal/timeseries",
-    "trace"
+    "trace",
   ]
+  pruneopts = "UT"
   revision = "eb5bcb51f2a31c7d5141d810b70815c05d9c9146"
 
 [[projects]]
   branch = "master"
+  digest = "1:d0e9a312c4610a508569ab25e54d34600b1a96d19b1866ece104ffdf1c1b9d2c"
   name = "golang.org/x/sys"
   packages = ["unix"]
+  pruneopts = "UT"
   revision = "cd391775e71e684db52b63df9affd58269495083"
 
 [[projects]]
+  digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
   name = "golang.org/x/text"
   packages = [
     "collate",
@@ -198,24 +263,30 @@
     "unicode/bidi",
     "unicode/cldr",
     "unicode/norm",
-    "unicode/rangetable"
+    "unicode/rangetable",
   ]
+  pruneopts = "UT"
   revision = "f21a4dfb5e38f5895301dc265a8def02365cc3d0"
   version = "v0.3.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:9fdc2b55e8e0fafe4b41884091e51e77344f7dc511c5acedcfd98200003bff90"
   name = "golang.org/x/time"
   packages = ["rate"]
+  pruneopts = "UT"
   revision = "9d24e82272b4f38b78bc8cff74fa936d31ccd8ef"
 
 [[projects]]
   branch = "master"
+  digest = "1:c3076e7defee87de1236f1814beb588f40a75544c60121e6eb38b3b3721783e2"
   name = "google.golang.org/genproto"
   packages = ["googleapis/rpc/status"]
+  pruneopts = "UT"
   revision = "64821d5d210748c883cd2b809589555ae4654203"
 
 [[projects]]
+  digest = "1:c00eb80d7b152379c3e94c38d82b29deca98b1d0f53e4e20362589b7fcbffa07"
   name = "google.golang.org/grpc"
   packages = [
     ".",
@@ -248,20 +319,43 @@
     "resolver/passthrough",
     "stats",
     "status",
-    "tap"
+    "tap",
   ]
+  pruneopts = "UT"
   revision = "3507fb8e1a5ad030303c106fef3a47c9fdad16ad"
   version = "v1.19.1"
 
 [[projects]]
+  digest = "1:4d2e5a73dc1500038e504a8d78b986630e3626dc027bc030ba5c75da257cdb96"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
+  pruneopts = "UT"
   revision = "51d6538a90f86fe93ac480b35f37b2be17fef232"
   version = "v2.2.2"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "830035aca003f260a4ba71893949e6be1bcc6ea3b1381827973c595e4e8f8501"
+  input-imports = [
+    "github.com/beevik/guid",
+    "github.com/goat-project/goat-proto-go",
+    "github.com/golang/protobuf/ptypes",
+    "github.com/golang/protobuf/ptypes/duration",
+    "github.com/golang/protobuf/ptypes/empty",
+    "github.com/golang/protobuf/ptypes/timestamp",
+    "github.com/golang/protobuf/ptypes/wrappers",
+    "github.com/karrick/tparse/v2",
+    "github.com/onego-project/onego",
+    "github.com/onego-project/onego/errors",
+    "github.com/onego-project/onego/resources",
+    "github.com/onego-project/onego/services",
+    "github.com/rafaeljesus/retry-go",
+    "github.com/remeh/sizedwaitgroup",
+    "github.com/sirupsen/logrus",
+    "github.com/spf13/cobra",
+    "github.com/spf13/viper",
+    "golang.org/x/time/rate",
+    "google.golang.org/grpc",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
