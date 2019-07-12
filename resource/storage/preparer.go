@@ -49,13 +49,10 @@ func (p *Preparer) InitializeMaps(wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	wg.Add(1)
-	go p.initializeUserTemplateIdentity(wg)
-}
-
-func (p *Preparer) initializeUserTemplateIdentity(wg *sync.WaitGroup) {
-	defer wg.Done()
-
-	p.userTemplateIdentity = initialization.InitializeUserTemplateIdentity(p.reader)
+	go func() {
+		defer wg.Done()
+		p.userTemplateIdentity = initialization.InitializeUserTemplateIdentity(p.reader)
+	}()
 }
 
 // Preparation prepares storage data for writing and call method to write.
