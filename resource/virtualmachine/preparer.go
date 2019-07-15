@@ -1,7 +1,6 @@
 package virtualmachine
 
 import (
-	"fmt"
 	"strconv"
 	"sync"
 	"time"
@@ -31,6 +30,8 @@ import (
 	pb "github.com/goat-project/goat-proto-go"
 
 	log "github.com/sirupsen/logrus"
+
+	"github.com/google/uuid"
 )
 
 // Preparer to prepare virtual machine data to specific structure for writing to Goat server.
@@ -89,12 +90,6 @@ func (p *Preparer) Preparation(acc resource.Resource, wg *sync.WaitGroup) {
 		return
 	}
 
-	vmuuid, err := getVMUUID(vm)
-	if err != nil {
-		log.WithFields(log.Fields{"error": err, "id": id}).Error("error get VMUUID, unable to prepare VM")
-		return
-	}
-
 	machineName, err := getMachineName(vm)
 	if err != nil {
 		log.WithFields(log.Fields{"error": err, "id": id}).Error("error get machine name, unable to prepare VM")
@@ -117,7 +112,7 @@ func (p *Preparer) Preparation(acc resource.Resource, wg *sync.WaitGroup) {
 	wallDuration := getWallDuration(vm)
 
 	vmRecord := pb.VmRecord{
-		VmUuid:              vmuuid,
+		VmUuid:              uuid.New().String(),
 		SiteName:            getSiteName(),
 		CloudComputeService: getCloudComputeService(),
 		MachineName:         machineName,
@@ -159,15 +154,6 @@ func (p *Preparer) SendIdentifier() error {
 // Then, it closes the gRPC connection.
 func (p *Preparer) Finish() {
 	p.Writer.Finish()
-}
-
-func getVMUUID(vm *resources.VirtualMachine) (string, error) {
-	id, err := vm.ID()
-	if err != nil {
-		return "", err
-	}
-
-	return fmt.Sprint(id), nil // TODO: change format
 }
 
 func getSiteName() string {
