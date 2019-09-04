@@ -16,8 +16,12 @@ func CreateFilter() *Filter {
 }
 
 // Filtering - only for VM relevant.
-func (f *Filter) Filtering(res resource.Resource, filtered chan resource.Resource, wg *sync.WaitGroup) {
+func (f *Filter) Filtering(network resource.Resource, filtered chan resource.Resource, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	filtered <- res
+	if network == nil {
+		return
+	}
+
+	filtered <- network
 }
