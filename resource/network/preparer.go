@@ -6,6 +6,8 @@ import (
 	"sync"
 	"time"
 
+	"google.golang.org/grpc"
+
 	"github.com/goat-project/goat-one/util"
 	"github.com/golang/protobuf/ptypes/wrappers"
 
@@ -29,9 +31,19 @@ type Preparer struct {
 }
 
 // CreatePreparer creates Preparer for network records.
-func CreatePreparer(limiter *rate.Limiter) *Preparer {
+func CreatePreparer(limiter *rate.Limiter, conn *grpc.ClientConn) *Preparer {
+	if limiter == nil {
+		log.WithFields(log.Fields{"error": "error"}).Error("error create Preparer when limiter is nil")
+		return nil
+	}
+
+	if conn == nil {
+		log.WithFields(log.Fields{"error": "error"}).Error("error create Preparer when gRPC client connection is nil")
+		return nil
+	}
+
 	return &Preparer{
-		Writer: *writer.CreateWriter(CreateWriter(limiter)),
+		Writer: *writer.CreateWriter(CreateWriter(limiter), conn),
 	}
 }
 

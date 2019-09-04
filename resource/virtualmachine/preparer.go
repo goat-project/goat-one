@@ -5,6 +5,8 @@ import (
 	"sync"
 	"time"
 
+	"google.golang.org/grpc"
+
 	"github.com/goat-project/goat-one/initialization"
 
 	"github.com/goat-project/goat-one/util"
@@ -45,10 +47,10 @@ type Preparer struct {
 }
 
 // CreatePreparer creates Preparer for virtual machine records.
-func CreatePreparer(reader *reader.Reader, limiter *rate.Limiter) *Preparer {
+func CreatePreparer(reader *reader.Reader, limiter *rate.Limiter, conn *grpc.ClientConn) *Preparer {
 	return &Preparer{
 		reader: *reader,
-		Writer: *writer.CreateWriter(CreateWriter(limiter)),
+		Writer: *writer.CreateWriter(CreateWriter(limiter), conn),
 	}
 }
 
