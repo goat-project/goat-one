@@ -2,6 +2,17 @@
 
 
 [[projects]]
+  digest = "1:098a3fca724172e8a7a7de614e0bf0983e36cab35d67e0746bb75fed1b4edb64"
+  name = "cloud.google.com/go"
+  packages = [
+    "rpcreplay",
+    "rpcreplay/proto/rpcreplay",
+  ]
+  pruneopts = "UT"
+  revision = "ceeb313ad77b789a7fa5287b36a1d127b69b7093"
+  version = "v0.44.3"
+
+[[projects]]
   digest = "1:bd8bc15ce3a9929e2777651cbc271fca5561c0d5f42187edb4720e638d24662d"
   name = "github.com/beevik/etree"
   packages = ["."]
@@ -16,6 +27,25 @@
   packages = ["."]
   pruneopts = "UT"
   revision = "d0ea8faecee03ccdfb5ab8322d5d9037bb7af438"
+
+[[projects]]
+  digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  pruneopts = "UT"
+  revision = "8991bc29aa16c548c550c7ff78260e27b9ab7c73"
+  version = "v1.1.1"
+
+[[projects]]
+  digest = "1:052aa482c25b2d76f432c16c4b404a6a3cb9cc205a95818c7680fcec501a43b7"
+  name = "github.com/dnaeon/go-vcr"
+  packages = [
+    "cassette",
+    "recorder",
+  ]
+  pruneopts = "UT"
+  revision = "b3f5a17c396f1f45e232e36c6eed2577da52d22a"
+  version = "v1.0.1"
 
 [[projects]]
   digest = "1:abeb38ade3f32a92943e5be54f55ed6d6e3b6602761d74b4aab4c9dd45c18abd"
@@ -50,6 +80,14 @@
   version = "v1.3.1"
 
 [[projects]]
+  digest = "1:582b704bebaa06b48c29b0cec224a6058a09c86883aaddabde889cd1a5f73e1b"
+  name = "github.com/google/uuid"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "0cd6bf5da1e1c83f8b45653022c74f71af0538a4"
+  version = "v1.1.1"
+
+[[projects]]
   digest = "1:c0d19ab64b32ce9fe5cf4ddceba78d5bc9807f0016db6b1183599da3dcc24d10"
   name = "github.com/hashicorp/hcl"
   packages = [
@@ -66,6 +104,20 @@
   ]
   pruneopts = "UT"
   revision = "8cb6e5b959231cc1119e43259c4a608f9c51a241"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:a1038ef593beb4771c8f0f9c26e8b00410acd800af5c6864651d9bf160ea1813"
+  name = "github.com/hpcloud/tail"
+  packages = [
+    ".",
+    "ratelimiter",
+    "util",
+    "watch",
+    "winfile",
+  ]
+  pruneopts = "UT"
+  revision = "a30252cb686a21eb2d0b98132633053ec2f7f1e5"
   version = "v1.0.0"
 
 [[projects]]
@@ -132,6 +184,54 @@
   version = "v1.1.0"
 
 [[projects]]
+  digest = "1:c0af9fc881a62776156eb2cd00fc1a14bd61ffdf285d1f8ac3b5c2834e1963d2"
+  name = "github.com/onsi/ginkgo"
+  packages = [
+    ".",
+    "config",
+    "internal/codelocation",
+    "internal/containernode",
+    "internal/failer",
+    "internal/leafnodes",
+    "internal/remote",
+    "internal/spec",
+    "internal/spec_iterator",
+    "internal/specrunner",
+    "internal/suite",
+    "internal/testingtproxy",
+    "internal/writer",
+    "reporters",
+    "reporters/stenographer",
+    "reporters/stenographer/support/go-colorable",
+    "reporters/stenographer/support/go-isatty",
+    "types",
+  ]
+  pruneopts = "UT"
+  revision = "f90f37d87fa6b1dd9625e2b1e83c23ffae3de228"
+  version = "v1.10.0"
+
+[[projects]]
+  digest = "1:5a9c247f0da47393b38eb20b53077be9e25452d8b2de1fdfec857233a18c503c"
+  name = "github.com/onsi/gomega"
+  packages = [
+    ".",
+    "format",
+    "internal/assertion",
+    "internal/asyncassertion",
+    "internal/oraclematcher",
+    "internal/testingtsupport",
+    "matchers",
+    "matchers/support/goraph/bipartitegraph",
+    "matchers/support/goraph/edge",
+    "matchers/support/goraph/node",
+    "matchers/support/goraph/util",
+    "types",
+  ]
+  pruneopts = "UT"
+  revision = "bdebf9e0ece900259084cfa4121b97ce1a540939"
+  version = "v1.7.0"
+
+[[projects]]
   digest = "1:95741de3af260a92cc5c7f3f3061e85273f5a81b5db20d4bd68da74bd521675e"
   name = "github.com/pelletier/go-toml"
   packages = ["."]
@@ -146,6 +246,14 @@
   pruneopts = "UT"
   revision = "ba968bfe8b2f7e042a574c888954fccecfa385b4"
   version = "v0.8.1"
+
+[[projects]]
+  digest = "1:0028cb19b2e4c3112225cd871870f2d9cf49b9b4276531f03438a88e94be86fe"
+  name = "github.com/pmezard/go-difflib"
+  packages = ["difflib"]
+  pruneopts = "UT"
+  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
+  version = "v1.0.0"
 
 [[projects]]
   digest = "1:e65b85a32c2aaf1fefbc03721573929fe08cfc0198f63167b56aaa19c27a1fb1"
@@ -164,9 +272,12 @@
   revision = "5e7302b12ccef91dce9fde2f5bda6d5c7ea5d2eb"
 
 [[projects]]
-  digest = "1:fd61cf4ae1953d55df708acb6b91492d538f49c305b364a014049914495db426"
+  digest = "1:33a48129d0a0eeb790b9ccba3560d2bc191b023e14285369e9f7dfae1e22830a"
   name = "github.com/sirupsen/logrus"
-  packages = ["."]
+  packages = [
+    ".",
+    "hooks/test",
+  ]
   pruneopts = "UT"
   revision = "8bdbc7bcc01dcbb8ec23dc8a28e332258d25251f"
   version = "v1.4.1"
@@ -223,11 +334,22 @@
   version = "v1.3.1"
 
 [[projects]]
+  digest = "1:8548c309c65a85933a625be5e7d52b6ac927ca30c56869fae58123b8a77a75e1"
+  name = "github.com/stretchr/testify"
+  packages = ["assert"]
+  pruneopts = "UT"
+  revision = "221dbe5ed46703ee255b1da0dec05086f5035f62"
+  version = "v1.4.0"
+
+[[projects]]
   branch = "master"
-  digest = "1:a7550c619a7f9701bc2f0b2c866668a207cfb693a2834796f723d2c78b514372"
+  digest = "1:22cc603c41a19a46d0dc832c14ab0b7f72378c5c2cb79783c735ed03bd492c39"
   name = "golang.org/x/net"
   packages = [
     "context",
+    "html",
+    "html/atom",
+    "html/charset",
     "http/httpguts",
     "http2",
     "http2/hpack",
@@ -247,17 +369,29 @@
   revision = "cd391775e71e684db52b63df9affd58269495083"
 
 [[projects]]
-  digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
+  digest = "1:436b24586f8fee329e0dd65fd67c817681420cda1d7f934345c13fe78c212a73"
   name = "golang.org/x/text"
   packages = [
     "collate",
     "collate/build",
+    "encoding",
+    "encoding/charmap",
+    "encoding/htmlindex",
+    "encoding/internal",
+    "encoding/internal/identifier",
+    "encoding/japanese",
+    "encoding/korean",
+    "encoding/simplifiedchinese",
+    "encoding/traditionalchinese",
+    "encoding/unicode",
     "internal/colltab",
     "internal/gen",
     "internal/tag",
     "internal/triegen",
     "internal/ucd",
+    "internal/utf8internal",
     "language",
+    "runes",
     "secure/bidirule",
     "transform",
     "unicode/bidi",
@@ -326,6 +460,23 @@
   version = "v1.19.1"
 
 [[projects]]
+  digest = "1:abeb38ade3f32a92943e5be54f55ed6d6e3b6602761d74b4aab4c9dd45c18abd"
+  name = "gopkg.in/fsnotify.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "c2828203cd70a50dcccfb2761f8b1f8ceef9a8e9"
+  source = "https://github.com/fsnotify/fsnotify.git"
+  version = "v1.4.7"
+
+[[projects]]
+  branch = "v1"
+  digest = "1:0caa92e17bc0b65a98c63e5bc76a9e844cd5e56493f8fdbb28fad101a16254d9"
+  name = "gopkg.in/tomb.v1"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "dd632973f1e7218eb1089048e0798ec9ae7dceb8"
+
+[[projects]]
   digest = "1:4d2e5a73dc1500038e504a8d78b986630e3626dc027bc030ba5c75da257cdb96"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
@@ -337,23 +488,31 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "cloud.google.com/go/rpcreplay",
     "github.com/beevik/guid",
+    "github.com/dnaeon/go-vcr/cassette",
+    "github.com/dnaeon/go-vcr/recorder",
     "github.com/goat-project/goat-proto-go",
     "github.com/golang/protobuf/ptypes",
     "github.com/golang/protobuf/ptypes/duration",
     "github.com/golang/protobuf/ptypes/empty",
     "github.com/golang/protobuf/ptypes/timestamp",
     "github.com/golang/protobuf/ptypes/wrappers",
+    "github.com/google/uuid",
     "github.com/karrick/tparse/v2",
     "github.com/onego-project/onego",
     "github.com/onego-project/onego/errors",
     "github.com/onego-project/onego/resources",
     "github.com/onego-project/onego/services",
+    "github.com/onsi/ginkgo",
+    "github.com/onsi/gomega",
     "github.com/rafaeljesus/retry-go",
     "github.com/remeh/sizedwaitgroup",
     "github.com/sirupsen/logrus",
+    "github.com/sirupsen/logrus/hooks/test",
     "github.com/spf13/cobra",
     "github.com/spf13/viper",
+    "github.com/stretchr/testify/assert",
     "golang.org/x/time/rate",
     "google.golang.org/grpc",
   ]
