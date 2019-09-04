@@ -4,6 +4,8 @@ import (
 	"strings"
 	"time"
 
+	"google.golang.org/grpc"
+
 	"golang.org/x/time/rate"
 
 	"github.com/goat-project/goat-one/logger"
@@ -109,6 +111,15 @@ func initConfig() {
 	if err != nil {
 		log.WithFields(log.Fields{"error": err}).Error("error config file")
 	}
+}
+
+func getConn() *grpc.ClientConn {
+	conn, err := grpc.Dial(viper.GetString(constants.CfgEndpoint), grpc.WithInsecure())
+	if err != nil {
+		log.WithFields(log.Fields{"error": err}).Fatal("error connect to gRPC server")
+	}
+
+	return conn
 }
 
 func checkRequired(required []string) {
