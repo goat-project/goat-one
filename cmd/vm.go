@@ -62,7 +62,7 @@ func accountVM(readLimiter, writeLimiter *rate.Limiter) {
 
 	proc := processor.CreateProcessor(virtualmachine.CreateProcessor(read))
 	filt := filter.CreateFilter(virtualmachine.CreateFilter())
-	prep := preparer.CreatePreparer(virtualmachine.CreatePreparer(read, writeLimiter))
+	prep := preparer.CreatePreparer(virtualmachine.CreatePreparer(read, writeLimiter, getConn()))
 
 	c := client.Client{}
 
