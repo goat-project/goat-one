@@ -64,7 +64,7 @@ func (p *Preparer) Preparation(acc resource.Resource, wg *sync.WaitGroup) {
 
 	id, err := netUser.ID()
 	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Error(constants.ErrPrepNoNetUserID)
+		log.WithFields(log.Fields{"error": err}).Error(constants.ErrPrepNoNetUser)
 		return
 	}
 
@@ -131,6 +131,11 @@ func getCloudType() string {
 }
 
 func getFqan(netUser NetUser) string {
+	if netUser.User == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrPrepNoNetUser)
+		return ""
+	}
+
 	groupName, err := netUser.User.Attribute("GNAME")
 	if err != nil {
 		log.WithFields(log.Fields{"err": err}).Error(constants.ErrNoGroupName)
