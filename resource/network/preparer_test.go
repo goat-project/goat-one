@@ -26,7 +26,7 @@ import (
 	"cloud.google.com/go/rpcreplay"
 )
 
-var recDir = "records/preparer/"
+var recPreparerDir = "records/preparer/"
 
 var _ = ginkgo.Describe("Network Preparer tests", func() {
 	var (
@@ -42,7 +42,7 @@ var _ = ginkgo.Describe("Network Preparer tests", func() {
 	)
 
 	ginkgo.JustBeforeEach(func() {
-		recPath := recDir + recName
+		recPath := recPreparerDir + recName
 
 		// Start recorder
 		if _, err = os.Stat(recPath); os.IsNotExist(err) {
