@@ -34,15 +34,6 @@ func CreateProcessor(Reader *reader.Reader) *Processor {
 func (p *Processor) Process(read chan resource.Resource, readDone chan bool, swg *sizedwaitgroup.SizedWaitGroup) {
 	defer swg.Done()
 
-	swg.Add()
-	go p.List(read, readDone, swg, 0)
-}
-
-// List calls method to list all users.
-func (p *Processor) List(read chan resource.Resource, _ chan bool, swg *sizedwaitgroup.SizedWaitGroup,
-	_ int) {
-	defer swg.Done()
-
 	users, err := p.reader.ListAllUsers()
 	if err != nil {
 		log.WithFields(log.Fields{"error": err}).Fatal("error list users")
