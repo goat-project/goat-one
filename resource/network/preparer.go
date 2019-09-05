@@ -57,7 +57,7 @@ func (p *Preparer) Preparation(acc resource.Resource, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	netUser := acc.(*NetUser)
-	if netUser == nil {
+	if netUser.User == nil {
 		log.WithFields(log.Fields{}).Error(constants.ErrPrepEmptyNetUser)
 		return
 	}

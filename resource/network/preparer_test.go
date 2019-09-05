@@ -5,6 +5,9 @@ import (
 	"os"
 	"sync"
 
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
+
 	"github.com/goat-project/goat-one/constants"
 	"github.com/spf13/viper"
 
@@ -34,8 +37,8 @@ var _ = ginkgo.Describe("Network Preparer tests", func() {
 		conn    *grpc.ClientConn
 
 		prep *network.Preparer
-		//net  *resource.Resource
-		wg sync.WaitGroup
+		wg   sync.WaitGroup
+		hook *test.Hook
 	)
 
 	ginkgo.JustBeforeEach(func() {
@@ -62,6 +65,8 @@ var _ = ginkgo.Describe("Network Preparer tests", func() {
 			fmt.Println("unable to create connection", err)
 			return
 		}
+
+		hook = test.NewGlobal()
 
 		prep = network.CreatePreparer(rate.NewLimiter(rate.Every(1), 1), conn)
 		wg.Add(1)
@@ -109,6 +114,9 @@ var _ = ginkgo.Describe("Network Preparer tests", func() {
 				p := network.CreatePreparer(nil, conn)
 
 				gomega.Expect(p).To(gomega.BeNil())
+
+				gomega.Expect(hook.LastEntry().Level).To(gomega.Equal(logrus.ErrorLevel))
+				gomega.Expect(hook.LastEntry().Message).To(gomega.Equal(constants.ErrCreatePrepLimiterNil))
 			})
 		})
 
@@ -121,6 +129,9 @@ var _ = ginkgo.Describe("Network Preparer tests", func() {
 				p := network.CreatePreparer(rate.NewLimiter(rate.Every(1), 1), nil)
 
 				gomega.Expect(p).To(gomega.BeNil())
+
+				gomega.Expect(hook.LastEntry().Level).To(gomega.Equal(logrus.ErrorLevel))
+				gomega.Expect(hook.LastEntry().Message).To(gomega.Equal(constants.ErrCreatePrepConnNil))
 			})
 		})
 	})
@@ -154,9 +165,10 @@ var _ = ginkgo.Describe("Network Preparer tests", func() {
 			})
 
 			ginkgo.It("should not prepare record", func() {
-				netUser := &network.NetUser{}
+				prep.Preparation(&network.NetUser{}, &wg)
 
-				gomega.Expect(func() { prep.Preparation(netUser, &wg) }).To(gomega.Panic())
+				gomega.Expect(hook.LastEntry().Level).To(gomega.Equal(logrus.ErrorLevel))
+				gomega.Expect(hook.LastEntry().Message).To(gomega.Equal(constants.ErrPrepEmptyNetUser))
 			})
 		})
 
