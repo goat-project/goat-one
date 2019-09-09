@@ -25,4 +25,5 @@ const (
 	ErrNoSiteName           = "no site name in configuration"
 	ErrNoCloudType          = "no cloud type in configuration"
 	ErrNoGroupName          = "no group name"
+	ErrCreateProcReaderNil  = "error create Processor when Reader is nil"
 )

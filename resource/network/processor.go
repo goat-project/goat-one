@@ -3,6 +3,8 @@ package network
 import (
 	"sync"
 
+	"github.com/goat-project/goat-one/constants"
+
 	"github.com/goat-project/goat-one/reader"
 	"github.com/goat-project/goat-one/resource"
 	"github.com/onego-project/onego/resources"
@@ -24,9 +26,14 @@ type NetUser struct {
 }
 
 // CreateProcessor creates Processor to manage reading from OpenNebula.
-func CreateProcessor(Reader *reader.Reader) *Processor {
+func CreateProcessor(r *reader.Reader) *Processor {
+	if r == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrCreateProcReaderNil)
+		return nil
+	}
+
 	return &Processor{
-		reader: *Reader,
+		reader: *r,
 	}
 }
 
