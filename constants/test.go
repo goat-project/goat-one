@@ -6,6 +6,8 @@ const (
 	OpenNebulaEndpoint = "http://192.168.122.208:2633/RPC2"
 	// WrongOpenNebulaEndpoint is wrong endpoint to test OpenNebula
 	WrongOpenNebulaEndpoint = "http://192.168.122.111:2633/RPC2"
+	// OpenNebulaTimeout is duration for OpenNebula calls
+	OpenNebulaTimeout = "5m"
 
 	name          = "oneadmin"
 	password      = "opennebula"
