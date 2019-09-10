@@ -38,7 +38,7 @@ func CreateProcessor(r *reader.Reader) *Processor {
 }
 
 // Process provides listing of the users.
-func (p *Processor) Process(read chan resource.Resource, readDone chan bool, swg *sizedwaitgroup.SizedWaitGroup) {
+func (p *Processor) Process(read chan resource.Resource, _ chan bool, swg *sizedwaitgroup.SizedWaitGroup) {
 	defer swg.Done()
 
 	users, err := p.reader.ListAllUsers()
