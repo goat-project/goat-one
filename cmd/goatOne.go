@@ -1,8 +1,11 @@
 package cmd
 
 import (
+	"net/http"
 	"strings"
 	"time"
+
+	"github.com/onego-project/onego"
 
 	"google.golang.org/grpc"
 
@@ -120,6 +123,11 @@ func getConn() *grpc.ClientConn {
 	}
 
 	return conn
+}
+
+func getOpenNebulaClient() *onego.Client {
+	return onego.CreateClient(viper.GetString(constants.CfgOpennebulaEndpoint),
+		viper.GetString(constants.CfgOpennebulaSecret), &http.Client{})
 }
 
 func checkRequired(required []string) {
