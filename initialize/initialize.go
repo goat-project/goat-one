@@ -1,4 +1,4 @@
-package initialization
+package initialize
 
 import (
 	"strconv"
@@ -17,8 +17,8 @@ type benchmark struct {
 	bValue string
 }
 
-// InitializeUserTemplateIdentity returns map of user ID and value in TEMPLATE/IDENTITY.
-func InitializeUserTemplateIdentity(r reader.Reader) map[int]string {
+// UserTemplateIdentity returns map of user ID and value in TEMPLATE/IDENTITY.
+func UserTemplateIdentity(r reader.Reader) map[int]string {
 	objs, err := r.ListAllUsers()
 	if err != nil {
 		log.WithFields(log.Fields{"error": err}).Error("error list all users")
@@ -33,9 +33,9 @@ func InitializeUserTemplateIdentity(r reader.Reader) map[int]string {
 	return find(res, constants.TemplateIdentity)
 }
 
-// InitializeImageTemplateCloudkeeperApplianceMpuri returns map of image ID and
+// ImageTemplateCloudkeeperApplianceMpuri returns map of image ID and
 // value in TEMPLATE/CLOUDKEEPER_APPLIANCE_MPURI.
-func InitializeImageTemplateCloudkeeperApplianceMpuri(r reader.Reader) map[int]string {
+func ImageTemplateCloudkeeperApplianceMpuri(r reader.Reader) map[int]string {
 	objs, err := r.ListAllImages()
 	if err != nil {
 		log.WithFields(log.Fields{"error": err}).Error("error list all images")
@@ -50,9 +50,9 @@ func InitializeImageTemplateCloudkeeperApplianceMpuri(r reader.Reader) map[int]s
 	return find(res, constants.TemplateCloudkeeperApplianceMpuri)
 }
 
-// InitializeHostTemplateBenchmark returns two maps: map of host ID and value in TEMPLATE/BENCHMARK_TYPE and
+// HostTemplateBenchmark returns two maps: map of host ID and value in TEMPLATE/BENCHMARK_TYPE and
 // map of host ID and value in TEMPLATE/BENCHMARK_VALUE.
-func InitializeHostTemplateBenchmark(r reader.Reader) (map[int]string, map[int]string) {
+func HostTemplateBenchmark(r reader.Reader) (map[int]string, map[int]string) {
 	hosts, err := r.ListAllHosts()
 	if err != nil {
 		log.WithFields(log.Fields{"error": err}).Error("error list all hosts")

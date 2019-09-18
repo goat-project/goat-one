@@ -7,7 +7,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/goat-project/goat-one/initialization"
+	"github.com/goat-project/goat-one/initialize"
 
 	"github.com/goat-project/goat-one/util"
 
@@ -62,17 +62,17 @@ func (p *Preparer) InitializeMaps(wg *sync.WaitGroup) {
 
 	go func() {
 		defer wg.Done()
-		p.userTemplateIdentity = initialization.InitializeUserTemplateIdentity(p.reader)
+		p.userTemplateIdentity = initialize.UserTemplateIdentity(p.reader)
 	}()
 
 	go func() {
 		defer wg.Done()
-		p.imageTemplateCloudkeeperApplianceMpuri = initialization.InitializeImageTemplateCloudkeeperApplianceMpuri(p.reader)
+		p.imageTemplateCloudkeeperApplianceMpuri = initialize.ImageTemplateCloudkeeperApplianceMpuri(p.reader)
 	}()
 
 	go func() {
 		defer wg.Done()
-		p.hostTemplateBenchmarkType, p.hostTemplateBenchmarkType = initialization.InitializeHostTemplateBenchmark(p.reader)
+		p.hostTemplateBenchmarkType, p.hostTemplateBenchmarkType = initialize.HostTemplateBenchmark(p.reader)
 	}()
 }
 

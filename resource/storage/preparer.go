@@ -6,7 +6,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/goat-project/goat-one/initialization"
+	"github.com/goat-project/goat-one/initialize"
 
 	"github.com/goat-project/goat-one/constants"
 	"github.com/goat-project/goat-one/reader"
@@ -68,7 +68,7 @@ func (p *Preparer) InitializeMaps(wg *sync.WaitGroup) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		p.userTemplateIdentity = initialization.InitializeUserTemplateIdentity(p.reader)
+		p.userTemplateIdentity = initialize.UserTemplateIdentity(p.reader)
 	}()
 }
 
