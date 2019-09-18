@@ -23,8 +23,10 @@ const (
 
 	// NumTestedNetworks is a number of tested networks
 	NumTestedNetworks = 2
+	// NumTestedVMs is a number of tested virtual machines
+	NumTestedVMs = 6
 
-	// BigPageOffset is a number bigger than number of networks divided by page size
+	// BigPageOffset is a number bigger than number of resources divided by page size
 	BigPageOffset = 1000
 	// NegPageOffset is a negative page offset
 	NegPageOffset = -10
