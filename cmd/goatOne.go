@@ -1,8 +1,13 @@
 package cmd
 
 import (
+	"net/http"
 	"strings"
 	"time"
+
+	"github.com/onego-project/onego"
+
+	"google.golang.org/grpc"
 
 	"golang.org/x/time/rate"
 
@@ -109,6 +114,20 @@ func initConfig() {
 	if err != nil {
 		log.WithFields(log.Fields{"error": err}).Error("error config file")
 	}
+}
+
+func getConn() *grpc.ClientConn {
+	conn, err := grpc.Dial(viper.GetString(constants.CfgEndpoint), grpc.WithInsecure())
+	if err != nil {
+		log.WithFields(log.Fields{"error": err}).Fatal("error connect to gRPC server")
+	}
+
+	return conn
+}
+
+func getOpenNebulaClient() *onego.Client {
+	return onego.CreateClient(viper.GetString(constants.CfgOpennebulaEndpoint),
+		viper.GetString(constants.CfgOpennebulaSecret), &http.Client{})
 }
 
 func checkRequired(required []string) {

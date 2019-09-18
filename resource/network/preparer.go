@@ -6,6 +6,8 @@ import (
 	"sync"
 	"time"
 
+	"google.golang.org/grpc"
+
 	"github.com/goat-project/goat-one/util"
 	"github.com/golang/protobuf/ptypes/wrappers"
 
@@ -29,9 +31,19 @@ type Preparer struct {
 }
 
 // CreatePreparer creates Preparer for network records.
-func CreatePreparer(limiter *rate.Limiter) *Preparer {
+func CreatePreparer(limiter *rate.Limiter, conn *grpc.ClientConn) *Preparer {
+	if limiter == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrCreatePrepLimiterNil)
+		return nil
+	}
+
+	if conn == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrCreatePrepConnNil)
+		return nil
+	}
+
 	return &Preparer{
-		Writer: *writer.CreateWriter(CreateWriter(limiter)),
+		Writer: *writer.CreateWriter(CreateWriter(limiter), conn),
 	}
 }
 
@@ -45,14 +57,14 @@ func (p *Preparer) Preparation(acc resource.Resource, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	netUser := acc.(*NetUser)
-	if netUser == nil {
-		log.WithFields(log.Fields{"error": "error"}).Error("error prepare empty NetUser")
+	if netUser.User == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrPrepEmptyNetUser)
 		return
 	}
 
 	id, err := netUser.ID()
 	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("error get id, unable to prepare network record")
+		log.WithFields(log.Fields{"error": err}).Error(constants.ErrPrepNoNetUser)
 		return
 	}
 
@@ -63,24 +75,24 @@ func (p *Preparer) Preparation(acc resource.Resource, wg *sync.WaitGroup) {
 	if countIPv4 != 0 {
 		ipv4Record, err := createIPRecord(*netUser, "IPv4", countIPv4)
 		if err != nil {
-			log.WithFields(log.Fields{"error": err, "user-id": id}).Error("unable to prepare ipv4 network record")
+			log.WithFields(log.Fields{"error": err, "user-id": id}).Error(constants.ErrPrepIPv4)
 			return
 		}
 
 		if err := p.Writer.Write(ipv4Record); err != nil {
-			log.WithFields(log.Fields{"error": err}).Error("error write network record")
+			log.WithFields(log.Fields{"error": err}).Error(constants.ErrPrepWrite)
 		}
 	}
 
 	if countIPv6 != 0 {
 		ipv6Record, err := createIPRecord(*netUser, "IPv6", countIPv6)
 		if err != nil {
-			log.WithFields(log.Fields{"error": err, "user-id": id}).Error("unable to prepare ipv6 network record")
+			log.WithFields(log.Fields{"error": err, "user-id": id}).Error(constants.ErrPrepIPv6)
 			return
 		}
 
 		if err := p.Writer.Write(ipv6Record); err != nil {
-			log.WithFields(log.Fields{"error": err}).Error("error write network record")
+			log.WithFields(log.Fields{"error": err}).Error(constants.ErrPrepWrite)
 		}
 	}
 }
@@ -99,7 +111,7 @@ func (p *Preparer) Finish() {
 func getSiteName() string {
 	siteName := viper.GetString(constants.CfgNetworkSiteName)
 	if siteName == "" {
-		log.WithFields(log.Fields{}).Error("no site name in configuration") // should never happen
+		log.WithFields(log.Fields{}).Error(constants.ErrNoSiteName) // should never happen
 	}
 
 	return siteName
@@ -112,16 +124,21 @@ func getCloudComputeService() *wrappers.StringValue {
 func getCloudType() string {
 	ct := viper.GetString(constants.CfgNetworkCloudType)
 	if ct == "" {
-		log.WithFields(log.Fields{}).Error("no cloud type in configuration") // should never happen
+		log.WithFields(log.Fields{}).Error(constants.ErrNoCloudType) // should never happen
 	}
 
 	return ct
 }
 
 func getFqan(netUser NetUser) string {
+	if netUser.User == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrPrepNoNetUser)
+		return ""
+	}
+
 	groupName, err := netUser.User.Attribute("GNAME")
 	if err != nil {
-		log.WithFields(log.Fields{"err": err}).Error("no group name")
+		log.WithFields(log.Fields{"err": err}).Error(constants.ErrNoGroupName)
 		return ""
 	}
 

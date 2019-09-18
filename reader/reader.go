@@ -2,7 +2,6 @@ package reader
 
 import (
 	"context"
-	"net/http"
 	"time"
 
 	"github.com/goat-project/goat-one/resource"
@@ -47,10 +46,7 @@ const attempts = 3
 const sleepTime = time.Second * 1
 
 // CreateReader creates reader with onego client, rate limiter and timeout.
-func CreateReader(limiter *rate.Limiter) *Reader {
-	// set up connection to OpenNebula
-	oneClient := onego.CreateClient(viper.GetString(constants.CfgOpennebulaEndpoint),
-		viper.GetString(constants.CfgOpennebulaSecret), &http.Client{})
+func CreateReader(oneClient *onego.Client, limiter *rate.Limiter) *Reader {
 	if oneClient == nil {
 		log.WithFields(log.Fields{"error": errors.ErrNoClient}).Fatal("error create Reader")
 	}
@@ -80,11 +76,8 @@ func (r *Reader) readResources(rri resourcesReaderI) ([]resource.Resource, error
 		defer cancel()
 
 		res, err = rri.ReadResources(ctx, r.client)
-		if err != nil {
-			return err
-		}
 
-		return nil
+		return err
 	}, attempts, sleepTime)
 
 	return res, err
@@ -103,11 +96,8 @@ func (r *Reader) readResource(rri resourceReaderI) (resource.Resource, error) {
 		defer cancel()
 
 		res, err = rri.ReadResource(ctx, r.client)
-		if err != nil {
-			return err
-		}
 
-		return nil
+		return err
 	}, attempts, sleepTime)
 
 	return res, err
@@ -126,11 +116,8 @@ func (r *Reader) readResourcesForUser(rri resourcesReaderForUserI) ([]resource.R
 		defer cancel()
 
 		res, err = rri.ReadResourcesForUser(ctx, r.client)
-		if err != nil {
-			return err
-		}
 
-		return nil
+		return err
 	}, attempts, sleepTime)
 
 	return res, err

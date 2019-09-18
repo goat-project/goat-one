@@ -17,7 +17,6 @@ type Processor struct {
 
 type processorI interface {
 	Process(chan resource.Resource, chan bool, *sizedwaitgroup.SizedWaitGroup)
-	List(chan resource.Resource, chan bool, *sizedwaitgroup.SizedWaitGroup, int)
 	RetrieveInfo(chan resource.Resource, *sync.WaitGroup, resource.Resource)
 }
 

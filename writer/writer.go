@@ -1,10 +1,8 @@
 package writer
 
 import (
-	"github.com/goat-project/goat-one/constants"
 	"github.com/golang/protobuf/ptypes/empty"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 )
 
@@ -22,13 +20,7 @@ type writerI interface {
 }
 
 // CreateWriter creates writer with writer interface and gRPC connection.
-func CreateWriter(w writerI) *Writer {
-	// set up connection to the goat server
-	conn, err := grpc.Dial(viper.GetString(constants.CfgEndpoint), grpc.WithInsecure())
-	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Fatal("error connect to gRPC server")
-	}
-
+func CreateWriter(w writerI, conn *grpc.ClientConn) *Writer {
 	w.SetUp(conn)
 
 	return &Writer{

@@ -61,9 +61,9 @@ func initNetwork() {
 }
 
 func accountNetwork(readLimiter, writeLimiter *rate.Limiter) {
-	read := reader.CreateReader(readLimiter)
+	read := reader.CreateReader(getOpenNebulaClient(), readLimiter)
 
-	prep := preparer.CreatePreparer(network.CreatePreparer(writeLimiter))
+	prep := preparer.CreatePreparer(network.CreatePreparer(writeLimiter, getConn()))
 	filt := filter.CreateFilter(network.CreateFilter())
 	proc := processor.CreateProcessor(network.CreateProcessor(read))
 

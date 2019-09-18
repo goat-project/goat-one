@@ -3,6 +3,8 @@ package network
 import (
 	"sync"
 
+	"github.com/goat-project/goat-one/constants"
+
 	"github.com/goat-project/goat-one/reader"
 	"github.com/goat-project/goat-one/resource"
 	"github.com/onego-project/onego/resources"
@@ -24,23 +26,19 @@ type NetUser struct {
 }
 
 // CreateProcessor creates Processor to manage reading from OpenNebula.
-func CreateProcessor(Reader *reader.Reader) *Processor {
+func CreateProcessor(r *reader.Reader) *Processor {
+	if r == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrCreateProcReaderNil)
+		return nil
+	}
+
 	return &Processor{
-		reader: *Reader,
+		reader: *r,
 	}
 }
 
 // Process provides listing of the users.
-func (p *Processor) Process(read chan resource.Resource, readDone chan bool, swg *sizedwaitgroup.SizedWaitGroup) {
-	defer swg.Done()
-
-	swg.Add()
-	go p.List(read, readDone, swg, 0)
-}
-
-// List calls method to list all users.
-func (p *Processor) List(read chan resource.Resource, _ chan bool, swg *sizedwaitgroup.SizedWaitGroup,
-	_ int) {
+func (p *Processor) Process(read chan resource.Resource, _ chan bool, swg *sizedwaitgroup.SizedWaitGroup) {
 	defer swg.Done()
 
 	users, err := p.reader.ListAllUsers()

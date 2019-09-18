@@ -54,11 +54,11 @@ func initStorage() {
 }
 
 func accountStorage(readLimiter, writeLimiter *rate.Limiter) {
-	read := reader.CreateReader(readLimiter)
+	read := reader.CreateReader(getOpenNebulaClient(), readLimiter)
 
 	proc := processor.CreateProcessor(storage.CreateProcessor(read))
 	filt := filter.CreateFilter(storage.CreateFilter())
-	prep := preparer.CreatePreparer(storage.CreatePreparer(read, writeLimiter))
+	prep := preparer.CreatePreparer(storage.CreatePreparer(read, writeLimiter, getConn()))
 
 	c := client.Client{}
 
