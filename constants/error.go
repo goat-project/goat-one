@@ -2,6 +2,7 @@ package constants
 
 // constants with error messages
 const (
+	ErrCreatePrepReaderNil  = "error create Preparer when reader is nil"
 	ErrCreatePrepLimiterNil = "error create Preparer when limiter is nil"
 	ErrCreatePrepConnNil    = "error create Preparer when gRPC client connection is nil"
 

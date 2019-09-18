@@ -40,6 +40,21 @@ type Preparer struct {
 
 // CreatePreparer creates Preparer for storage records.
 func CreatePreparer(reader *reader.Reader, limiter *rate.Limiter, conn *grpc.ClientConn) *Preparer {
+	if reader == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrCreatePrepReaderNil)
+		return nil
+	}
+
+	if limiter == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrCreatePrepLimiterNil)
+		return nil
+	}
+
+	if conn == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrCreatePrepConnNil)
+		return nil
+	}
+
 	return &Preparer{
 		reader: *reader,
 		Writer: *writer.CreateWriter(CreateWriter(limiter), conn),
