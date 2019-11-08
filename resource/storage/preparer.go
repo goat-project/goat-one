@@ -150,10 +150,18 @@ func getStorageShare(storage *resources.Image) *wrappers.StringValue {
 }
 
 func getUID(storage *resources.Image) *wrappers.StringValue {
+	if storage == nil {
+		return nil
+	}
+
 	return util.CheckValueErrInt(storage.User())
 }
 
 func getGID(storage *resources.Image) *wrappers.StringValue {
+	if storage == nil {
+		return nil
+	}
+
 	return util.CheckValueErrInt(storage.Group())
 }
 
