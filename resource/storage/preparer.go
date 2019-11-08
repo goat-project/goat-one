@@ -78,25 +78,25 @@ func (p *Preparer) Preparation(acc resource.Resource, wg *sync.WaitGroup) {
 
 	storage := acc.(*resources.Image)
 	if storage == nil {
-		log.WithFields(log.Fields{"error": errors.ErrNoImage}).Error("error prepare empty storage")
+		log.WithFields(log.Fields{"error": errors.ErrNoImage}).Error(constants.ErrPrepEmptyImage)
 		return
 	}
 
 	id, err := storage.ID()
 	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("error prepare storage record")
+		log.WithFields(log.Fields{"error": err}).Error(constants.ErrPrepNoImage)
 		return
 	}
 
 	startTime, err := getStartTime(storage)
 	if err != nil {
-		log.WithFields(log.Fields{"error": err, "id": id}).Error("error get REGTIME, unable to prepare storage")
+		log.WithFields(log.Fields{"error": err, "id": id}).Error(constants.ErrPrepRegTime)
 		return
 	}
 
 	size, err := getResourceCapacityUsed(storage)
 	if err != nil {
-		log.WithFields(log.Fields{"error": err, "id": id}).Error("error get SIZE, unable to prepare storage")
+		log.WithFields(log.Fields{"error": err, "id": id}).Error(constants.ErrPrepSize)
 		return
 	}
 
@@ -126,7 +126,7 @@ func (p *Preparer) Preparation(acc resource.Resource, wg *sync.WaitGroup) {
 	}
 
 	if err := p.Writer.Write(&storageRecord); err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("error send storage record")
+		log.WithFields(log.Fields{"error": err}).Error(constants.ErrPrepWrite)
 	}
 }
 

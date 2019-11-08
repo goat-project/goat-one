@@ -12,7 +12,13 @@ const (
 	ErrPrepIPv4 = "unable to prepare ipv4 network record"
 	ErrPrepIPv6 = "unable to prepare ipv6 network record"
 
-	ErrPrepWrite = "error write network record"
+	ErrPrepEmptyImage = "error prepare empty Image"
+	ErrPrepNoImage    = "error get id, unable to prepare storage record"
+
+	ErrPrepRegTime = "error get REGTIME, unable to prepare record"
+	ErrPrepSize    = "error get SIZE, unable to prepare record"
+
+	ErrPrepWrite = "error send record"
 
 	ErrNoSiteName  = "no site name in configuration"
 	ErrNoCloudType = "no cloud type in configuration"
