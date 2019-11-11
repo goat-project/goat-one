@@ -31,23 +31,7 @@ func (p *Processor) Process(read chan resource.Resource, readDone chan bool, swg
 processing:
 	for {
 		swg.Add()
-		go func() {
-			defer swg.Done()
-
-			vms, err := p.reader.ListAllVirtualMachines(pageOffset)
-			if err != nil {
-				log.WithFields(log.Fields{"error": err, "page-offset": pageOffset}).Fatal("error list virtual machines")
-			}
-
-			if len(vms) == 0 {
-				readDone <- true
-				return
-			}
-
-			for _, v := range vms {
-				read <- v
-			}
-		}()
+		go p.List(read, readDone, swg, pageOffset)
 		select {
 		case <-readDone:
 			break processing
@@ -55,6 +39,26 @@ processing:
 		}
 
 		pageOffset++
+	}
+}
+
+// List calls method to list virtual machines by page offset.
+func (p *Processor) List(read chan resource.Resource, readDone chan bool, swg *sizedwaitgroup.SizedWaitGroup,
+	pageOffset int) {
+	defer swg.Done()
+
+	vms, err := p.reader.ListAllVirtualMachines(pageOffset)
+	if err != nil {
+		log.WithFields(log.Fields{"error": err, "page-offset": pageOffset}).Fatal("error list virtual machines")
+	}
+
+	if len(vms) == 0 {
+		readDone <- true
+		return
+	}
+
+	for _, v := range vms {
+		read <- v
 	}
 }
 
