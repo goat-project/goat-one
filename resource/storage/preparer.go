@@ -6,7 +6,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	"github.com/goat-project/goat-one/initialization"
+	"github.com/goat-project/goat-one/initialize"
 
 	"github.com/goat-project/goat-one/constants"
 	"github.com/goat-project/goat-one/reader"
@@ -40,6 +40,21 @@ type Preparer struct {
 
 // CreatePreparer creates Preparer for storage records.
 func CreatePreparer(reader *reader.Reader, limiter *rate.Limiter, conn *grpc.ClientConn) *Preparer {
+	if reader == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrCreatePrepReaderNil)
+		return nil
+	}
+
+	if limiter == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrCreatePrepLimiterNil)
+		return nil
+	}
+
+	if conn == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrCreatePrepConnNil)
+		return nil
+	}
+
 	return &Preparer{
 		reader: *reader,
 		Writer: *writer.CreateWriter(CreateWriter(limiter), conn),
@@ -53,7 +68,7 @@ func (p *Preparer) InitializeMaps(wg *sync.WaitGroup) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		p.userTemplateIdentity = initialization.InitializeUserTemplateIdentity(p.reader)
+		p.userTemplateIdentity = initialize.UserTemplateIdentity(p.reader)
 	}()
 }
 
@@ -63,25 +78,25 @@ func (p *Preparer) Preparation(acc resource.Resource, wg *sync.WaitGroup) {
 
 	storage := acc.(*resources.Image)
 	if storage == nil {
-		log.WithFields(log.Fields{"error": errors.ErrNoImage}).Error("error prepare empty storage")
+		log.WithFields(log.Fields{"error": errors.ErrNoImage}).Error(constants.ErrPrepEmptyImage)
 		return
 	}
 
 	id, err := storage.ID()
 	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("error prepare storage record")
+		log.WithFields(log.Fields{"error": err}).Error(constants.ErrPrepNoImage)
 		return
 	}
 
 	startTime, err := getStartTime(storage)
 	if err != nil {
-		log.WithFields(log.Fields{"error": err, "id": id}).Error("error get REGTIME, unable to prepare storage")
+		log.WithFields(log.Fields{"error": err, "id": id}).Error(constants.ErrPrepRegTime)
 		return
 	}
 
 	size, err := getResourceCapacityUsed(storage)
 	if err != nil {
-		log.WithFields(log.Fields{"error": err, "id": id}).Error("error get SIZE, unable to prepare storage")
+		log.WithFields(log.Fields{"error": err, "id": id}).Error(constants.ErrPrepSize)
 		return
 	}
 
@@ -111,7 +126,7 @@ func (p *Preparer) Preparation(acc resource.Resource, wg *sync.WaitGroup) {
 	}
 
 	if err := p.Writer.Write(&storageRecord); err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("error send storage record")
+		log.WithFields(log.Fields{"error": err}).Error(constants.ErrPrepWrite)
 	}
 }
 
@@ -135,10 +150,18 @@ func getStorageShare(storage *resources.Image) *wrappers.StringValue {
 }
 
 func getUID(storage *resources.Image) *wrappers.StringValue {
+	if storage == nil {
+		return nil
+	}
+
 	return util.CheckValueErrInt(storage.User())
 }
 
 func getGID(storage *resources.Image) *wrappers.StringValue {
+	if storage == nil {
+		return nil
+	}
+
 	return util.CheckValueErrInt(storage.Group())
 }
 
