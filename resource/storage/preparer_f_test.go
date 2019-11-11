@@ -5,17 +5,13 @@ import (
 	"github.com/onego-project/onego/resources"
 	"github.com/onsi/ginkgo"
 	"github.com/onsi/gomega"
-	//"github.com/sirupsen/logrus/hooks/test"
 	"github.com/spf13/viper"
 )
 
 // the following tests test additive preparer functions
 
 var _ = ginkgo.Describe("Preparer function test", func() {
-	// var hook *test.Hook
-
 	ginkgo.JustBeforeEach(func() {
-		//hook = test.NewGlobal()
 	})
 
 	ginkgo.Describe("getSiteName", func() {
