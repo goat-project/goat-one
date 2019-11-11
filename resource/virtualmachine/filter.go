@@ -33,6 +33,7 @@ func CreateFilter() *Filter {
 	period, err := tparse.AddDuration(time.Time{}, periodStr)
 	if err != nil {
 		log.WithFields(log.Fields{"period": periodStr}).Error("wrong format of period")
+		period = time.Time{}
 	}
 
 	if (!recordsFrom.Equal(time.Time{}) || !recordsTo.Equal(time.Time{})) && !period.Equal(time.Time{}) {
@@ -86,6 +87,7 @@ func (f *Filter) Filtering(res resource.Resource, filtered chan resource.Resourc
 
 	if vm == nil {
 		log.WithFields(log.Fields{"err": errors.ErrNoVirtualMachine}).Error("error filter empty VM")
+		return
 	}
 
 	id, err := vm.ID()
