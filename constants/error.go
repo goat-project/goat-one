@@ -18,6 +18,13 @@ const (
 	ErrPrepRegTime = "error get REGTIME, unable to prepare record"
 	ErrPrepSize    = "error get SIZE, unable to prepare record"
 
+	ErrPrepEmptyVM = "error prepare empty Virtual machine"
+	ErrPrepNoVM    = "error get id, unable to prepare virtual machine record"
+
+	ErrPrepMachineName    = "error get machine name, unable to prepare record"
+	ErrPrepGlobalUserName = "error get global user name, unable to prepare record"
+	ErrPrepSTime          = "error get STIME, unable to prepare record"
+
 	ErrPrepWrite = "error send record"
 
 	ErrNoSiteName  = "no site name in configuration"

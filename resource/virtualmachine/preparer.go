@@ -48,6 +48,21 @@ type Preparer struct {
 
 // CreatePreparer creates Preparer for virtual machine records.
 func CreatePreparer(reader *reader.Reader, limiter *rate.Limiter, conn *grpc.ClientConn) *Preparer {
+	if reader == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrCreatePrepReaderNil)
+		return nil
+	}
+
+	if limiter == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrCreatePrepLimiterNil)
+		return nil
+	}
+
+	if conn == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrCreatePrepConnNil)
+		return nil
+	}
+
 	return &Preparer{
 		reader: *reader,
 		Writer: *writer.CreateWriter(CreateWriter(limiter), conn),
@@ -82,31 +97,31 @@ func (p *Preparer) Preparation(acc resource.Resource, wg *sync.WaitGroup) {
 
 	vm := acc.(*resources.VirtualMachine)
 	if vm == nil {
-		log.WithFields(log.Fields{"error": errors.ErrNoVirtualMachine}).Error("error prepare empty VM")
+		log.WithFields(log.Fields{"error": errors.ErrNoVirtualMachine}).Error(constants.ErrPrepEmptyVM)
 		return
 	}
 
 	id, err := vm.ID()
 	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("error prepare VM")
+		log.WithFields(log.Fields{"error": err}).Error(constants.ErrPrepNoVM)
 		return
 	}
 
 	machineName, err := getMachineName(vm)
 	if err != nil {
-		log.WithFields(log.Fields{"error": err, "id": id}).Error("error get machine name, unable to prepare VM")
+		log.WithFields(log.Fields{"error": err, "id": id}).Error(constants.ErrPrepMachineName)
 		return
 	}
 
 	globalUserName, err := getGlobalUserName(p, vm)
 	if err != nil {
-		log.WithFields(log.Fields{"error": err, "id": id}).Error("error get global user name, unable to prepare VM")
+		log.WithFields(log.Fields{"error": err, "id": id}).Error(constants.ErrPrepGlobalUserName)
 		return
 	}
 
 	sTime, err := getStartTime(vm)
 	if err != nil {
-		log.WithFields(log.Fields{"error": err, "id": id}).Error("error get STIME, unable to prepare VM")
+		log.WithFields(log.Fields{"error": err, "id": id}).Error(constants.ErrPrepSTime)
 		return
 	}
 
@@ -143,7 +158,7 @@ func (p *Preparer) Preparation(acc resource.Resource, wg *sync.WaitGroup) {
 	}
 
 	if err := p.Writer.Write(&vmRecord); err != nil {
-		log.WithFields(log.Fields{"error": err, "id": id}).Error("error write virtual machine record")
+		log.WithFields(log.Fields{"error": err, "id": id}).Error(constants.ErrPrepWrite)
 	}
 }
 
@@ -181,10 +196,18 @@ func getMachineName(vm *resources.VirtualMachine) (string, error) {
 }
 
 func getLocalUserID(vm *resources.VirtualMachine) *wrappers.StringValue {
+	if vm == nil {
+		return nil
+	}
+
 	return util.CheckValueErrInt(vm.User())
 }
 
 func getLocalGroupID(vm *resources.VirtualMachine) *wrappers.StringValue {
+	if vm == nil {
+		return nil
+	}
+
 	return util.CheckValueErrInt(vm.Group())
 }
 
@@ -247,6 +270,10 @@ func getSuspendDuration(sTime, eTime *timestamp.Timestamp, wallDuration *duratio
 }
 
 func getWallDuration(vm *resources.VirtualMachine) *duration.Duration {
+	if vm.XMLData == nil {
+		return nil
+	}
+
 	historyRecords, err := vm.HistoryRecords()
 	if err != nil {
 		log.WithFields(log.Fields{"error": err}).Error("error get history records")
@@ -302,6 +329,10 @@ func getNetworkOutbound(vm *resources.VirtualMachine) *wrappers.UInt64Value {
 }
 
 func getPublicIPCount(vm *resources.VirtualMachine) *wrappers.UInt64Value {
+	if vm.XMLData == nil {
+		return nil
+	}
+
 	nics, err := vm.NICs()
 	if err != nil {
 		return nil
@@ -322,6 +353,10 @@ func getMemory(vm *resources.VirtualMachine) *wrappers.UInt64Value {
 }
 
 func getDiskSizes(vm *resources.VirtualMachine) *wrappers.UInt64Value {
+	if vm.XMLData == nil {
+		return nil
+	}
+
 	disks, err := vm.Disks()
 	if err != nil {
 		return nil
@@ -337,6 +372,10 @@ func getDiskSizes(vm *resources.VirtualMachine) *wrappers.UInt64Value {
 }
 
 func getBenchmarkType(p *Preparer, vm *resources.VirtualMachine) *wrappers.StringValue {
+	if vm == nil || p == nil {
+		return nil
+	}
+
 	historyRecords, err := vm.HistoryRecords()
 	if err == nil && len(historyRecords) > 0 {
 		tbt := p.hostTemplateBenchmarkType[*historyRecords[0].HID]
@@ -349,6 +388,10 @@ func getBenchmarkType(p *Preparer, vm *resources.VirtualMachine) *wrappers.Strin
 }
 
 func getBenchmark(p *Preparer, vm *resources.VirtualMachine) *wrappers.FloatValue {
+	if vm == nil || p == nil {
+		return nil
+	}
+
 	historyRecords, err := vm.HistoryRecords()
 	if err == nil && len(historyRecords) > 0 {
 		tbv := p.hostTemplateBenchmarkValue[*historyRecords[0].HID]
@@ -364,6 +407,10 @@ func getBenchmark(p *Preparer, vm *resources.VirtualMachine) *wrappers.FloatValu
 }
 
 func getImageID(p *Preparer, vm *resources.VirtualMachine) *wrappers.StringValue {
+	if vm == nil || p == nil {
+		return nil
+	}
+
 	disks, err := vm.Disks()
 	if err == nil && len(disks) != 0 && disks[0] != nil {
 		iid := p.imageTemplateCloudkeeperApplianceMpuri[disks[0].ImageID]
@@ -378,7 +425,7 @@ func getImageID(p *Preparer, vm *resources.VirtualMachine) *wrappers.StringValue
 func getCloudType() *wrappers.StringValue {
 	ct := viper.GetString(constants.CfgCloudType)
 	if ct == "" {
-		log.WithFields(log.Fields{}).Error("no cloud type in configuration") // should never happen
+		log.WithFields(log.Fields{}).Error(constants.ErrNoCloudType) // should never happen
 	}
 
 	return &wrappers.StringValue{Value: ct}
