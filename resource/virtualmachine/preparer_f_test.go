@@ -285,8 +285,8 @@ var _ = ginkgo.Describe("Preparer function test", func() {
 
 		ginkgo.Context("when configuration is not set correctly", func() {
 			ginkgo.It("should return a string value", func() {
-				gomega.Expect(
-					getSuspendDuration(&timestamp.Timestamp{Seconds: 1573641110}, &timestamp.Timestamp{Seconds: 1573643810}, &duration.Duration{Seconds: 1000}).GetSeconds()).To(
+				gomega.Expect(getSuspendDuration(&timestamp.Timestamp{Seconds: 1573641110},
+					&timestamp.Timestamp{Seconds: 1573643810}, &duration.Duration{Seconds: 1000}).GetSeconds()).To(
 					gomega.Equal(int64(1700)))
 			})
 		})
@@ -501,7 +501,8 @@ var _ = ginkgo.Describe("Preparer function test", func() {
 				}
 				preparer := &Preparer{hostTemplateBenchmarkValue: htbv}
 
-				gomega.Expect(getBenchmark(preparer, resources.CreateVirtualMachineWithID(1)).GetValue()).To(gomega.Equal(float32(0)))
+				gomega.Expect(getBenchmark(preparer, resources.CreateVirtualMachineWithID(1)).GetValue()).To(
+					gomega.Equal(float32(0)))
 			})
 		})
 
