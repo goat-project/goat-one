@@ -33,6 +33,7 @@ func CreateFilter() *Filter {
 	period, err := tparse.AddDuration(time.Time{}, periodStr)
 	if err != nil {
 		log.WithFields(log.Fields{"period": periodStr}).Error("wrong format of period")
+		period = time.Time{}
 	}
 
 	if (!recordsFrom.Equal(time.Time{}) || !recordsTo.Equal(time.Time{})) && !period.Equal(time.Time{}) {
@@ -82,11 +83,12 @@ func CreateFilter() *Filter {
 func (f *Filter) Filtering(res resource.Resource, filtered chan resource.Resource, wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	vm := res.(*resources.VirtualMachine)
-
-	if vm == nil {
+	if res == nil {
 		log.WithFields(log.Fields{"err": errors.ErrNoVirtualMachine}).Error("error filter empty VM")
+		return
 	}
+
+	vm := res.(*resources.VirtualMachine)
 
 	id, err := vm.ID()
 	if err != nil {
@@ -96,11 +98,13 @@ func (f *Filter) Filtering(res resource.Resource, filtered chan resource.Resourc
 	stime, err := vm.STime()
 	if err != nil {
 		log.WithFields(log.Fields{"err": err, "id": id}).Error("error get STIME, unable to filter virtual machine")
+		return
 	}
 
 	etime, err := vm.ETime()
 	if err != nil {
 		log.WithFields(log.Fields{"err": err, "id": id}).Error("error get ETIME, unable to filter virtual machine")
+		return
 	}
 
 	if etime == nil {

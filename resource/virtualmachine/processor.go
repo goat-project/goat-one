@@ -3,6 +3,8 @@ package virtualmachine
 import (
 	"sync"
 
+	"github.com/goat-project/goat-one/constants"
+
 	"github.com/goat-project/goat-one/reader"
 	"github.com/goat-project/goat-one/resource"
 
@@ -17,9 +19,14 @@ type Processor struct {
 }
 
 // CreateProcessor creates processor with reader.
-func CreateProcessor(Reader *reader.Reader) *Processor {
+func CreateProcessor(r *reader.Reader) *Processor {
+	if r == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrCreateProcReaderNil)
+		return nil
+	}
+
 	return &Processor{
-		reader: *Reader,
+		reader: *r,
 	}
 }
 
@@ -31,23 +38,7 @@ func (p *Processor) Process(read chan resource.Resource, readDone chan bool, swg
 processing:
 	for {
 		swg.Add()
-		go func() {
-			defer swg.Done()
-
-			vms, err := p.reader.ListAllVirtualMachines(pageOffset)
-			if err != nil {
-				log.WithFields(log.Fields{"error": err, "page-offset": pageOffset}).Fatal("error list virtual machines")
-			}
-
-			if len(vms) == 0 {
-				readDone <- true
-				return
-			}
-
-			for _, v := range vms {
-				read <- v
-			}
-		}()
+		go p.list(read, readDone, swg, pageOffset)
 		select {
 		case <-readDone:
 			break processing
@@ -55,6 +46,26 @@ processing:
 		}
 
 		pageOffset++
+	}
+}
+
+// list calls method to list virtual machines by page offset.
+func (p *Processor) list(read chan resource.Resource, readDone chan bool, swg *sizedwaitgroup.SizedWaitGroup,
+	pageOffset int) {
+	defer swg.Done()
+
+	vms, err := p.reader.ListAllVirtualMachines(pageOffset)
+	if err != nil {
+		log.WithFields(log.Fields{"error": err, "page-offset": pageOffset}).Fatal("error list virtual machines")
+	}
+
+	if len(vms) == 0 {
+		readDone <- true
+		return
+	}
+
+	for _, v := range vms {
+		read <- v
 	}
 }
 
