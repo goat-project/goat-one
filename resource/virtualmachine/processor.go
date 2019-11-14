@@ -31,7 +31,7 @@ func (p *Processor) Process(read chan resource.Resource, readDone chan bool, swg
 processing:
 	for {
 		swg.Add()
-		go p.List(read, readDone, swg, pageOffset)
+		go p.list(read, readDone, swg, pageOffset)
 		select {
 		case <-readDone:
 			break processing
@@ -42,8 +42,8 @@ processing:
 	}
 }
 
-// List calls method to list virtual machines by page offset.
-func (p *Processor) List(read chan resource.Resource, readDone chan bool, swg *sizedwaitgroup.SizedWaitGroup,
+// list calls method to list virtual machines by page offset.
+func (p *Processor) list(read chan resource.Resource, readDone chan bool, swg *sizedwaitgroup.SizedWaitGroup,
 	pageOffset int) {
 	defer swg.Done()
 
