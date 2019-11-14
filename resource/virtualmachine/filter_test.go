@@ -18,11 +18,7 @@ import (
 
 var _ = ginkgo.Describe("Virtual machine Filter tests", func() {
 	var (
-		filter   *Filter
-		res      resource.Resource
-		filtered chan resource.Resource
-		wg       sync.WaitGroup
-
+		wg  sync.WaitGroup
 		doc *etree.Document
 	)
 
@@ -163,10 +159,10 @@ var _ = ginkgo.Describe("Virtual machine Filter tests", func() {
 	ginkgo.Describe("filter virtual machine", func() {
 		ginkgo.Context("when channel is empty and resource correct", func() {
 			ginkgo.It("should not post vm to the channel", func(done ginkgo.Done) {
-				res = resources.CreateVirtualMachineWithID(1)
-				filtered = make(chan resource.Resource)
+				res := resources.CreateVirtualMachineWithID(1)
+				filtered := make(chan resource.Resource)
 
-				filter = CreateFilter()
+				filter := CreateFilter()
 
 				wg.Add(1)
 				go filter.Filtering(res, filtered, &wg)
@@ -179,9 +175,9 @@ var _ = ginkgo.Describe("Virtual machine Filter tests", func() {
 
 		ginkgo.Context("when channel is empty and resource is not correct", func() {
 			ginkgo.It("should not post vm to the channel", func(done ginkgo.Done) {
-				filtered = make(chan resource.Resource)
+				filtered := make(chan resource.Resource)
 
-				filter = CreateFilter()
+				filter := CreateFilter()
 
 				wg.Add(1)
 				go filter.Filtering(nil, filtered, &wg)
@@ -199,10 +195,10 @@ var _ = ginkgo.Describe("Virtual machine Filter tests", func() {
 				dateTo := time.Now().Add(-24 * time.Hour)
 				viper.SetDefault(constants.CfgRecordsTo, dateTo)
 
-				filter = CreateFilter()
+				filter := CreateFilter()
 
-				res = resources.CreateVirtualMachineFromXML(doc.Root())
-				filtered = make(chan resource.Resource)
+				res := resources.CreateVirtualMachineFromXML(doc.Root())
+				filtered := make(chan resource.Resource)
 
 				wg.Add(1)
 				go filter.Filtering(res, filtered, &wg)
@@ -218,10 +214,10 @@ var _ = ginkgo.Describe("Virtual machine Filter tests", func() {
 				dateTo := time.Now().Add(-2 * 356 * 24 * time.Hour)
 				viper.SetDefault(constants.CfgRecordsTo, dateTo)
 
-				filter = CreateFilter()
+				filter := CreateFilter()
 
-				res = resources.CreateVirtualMachineFromXML(doc.Root())
-				filtered = make(chan resource.Resource)
+				res := resources.CreateVirtualMachineFromXML(doc.Root())
+				filtered := make(chan resource.Resource)
 
 				wg.Add(1)
 				go filter.Filtering(res, filtered, &wg)
