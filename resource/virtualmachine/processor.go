@@ -3,6 +3,8 @@ package virtualmachine
 import (
 	"sync"
 
+	"github.com/goat-project/goat-one/constants"
+
 	"github.com/goat-project/goat-one/reader"
 	"github.com/goat-project/goat-one/resource"
 
@@ -17,9 +19,14 @@ type Processor struct {
 }
 
 // CreateProcessor creates processor with reader.
-func CreateProcessor(Reader *reader.Reader) *Processor {
+func CreateProcessor(r *reader.Reader) *Processor {
+	if r == nil {
+		log.WithFields(log.Fields{}).Error(constants.ErrCreateProcReaderNil)
+		return nil
+	}
+
 	return &Processor{
-		reader: *Reader,
+		reader: *r,
 	}
 }
 
