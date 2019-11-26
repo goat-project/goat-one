@@ -1,7 +1,6 @@
 package network
 
 import (
-	"fmt"
 	"strconv"
 	"sync"
 	"time"
@@ -69,8 +68,6 @@ func (p *Preparer) Preparation(acc resource.Resource, wg *sync.WaitGroup) {
 	}
 
 	countIPv4, countIPv6 := countIPs(*netUser)
-
-	fmt.Println(id, len(netUser.ActiveVirtualMachines), countIPv4, countIPv6)
 
 	if countIPv4 != 0 {
 		ipv4Record, err := createIPRecord(*netUser, "IPv4", countIPv4)
