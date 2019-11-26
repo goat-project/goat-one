@@ -20,7 +20,11 @@ func Init() {
 			InitLogToStdout()
 		}
 	default:
-		InitLogToFile(path)
+		if viper.GetBool(constants.CfgDebug) {
+			InitLogToFileDebug(path)
+		} else {
+			InitLogToFile(path)
+		}
 	}
 }
 
@@ -49,4 +53,10 @@ func InitLogToFile(logPath string) {
 	}
 
 	logrus.SetOutput(f)
+}
+
+// InitLogToFileDebug inits logrus to log the debug severity or above to the file.
+func InitLogToFileDebug(logPath string) {
+	InitLogToFile(logPath)
+	logrus.SetLevel(logrus.DebugLevel)
 }
