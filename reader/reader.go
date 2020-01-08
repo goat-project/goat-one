@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/goat-project/goat-one/resource"
-	networkReader "github.com/goat-project/goat-one/resource/network/reader"
 	storageReader "github.com/goat-project/goat-one/resource/storage/reader"
 	virtualMachineReader "github.com/goat-project/goat-one/resource/virtualmachine/reader"
 
@@ -221,25 +220,6 @@ func (r *Reader) ListAllHosts() ([]*resources.Host, error) {
 	objs := make([]*resources.Host, len(res))
 	for i, e := range res {
 		objs[i] = e.(*resources.Host)
-	}
-
-	return objs, err
-}
-
-// ListAllVirtualNetworks lists all virtual networks by page offset.
-func (r *Reader) ListAllVirtualNetworks(pageOffset int) ([]*resources.VirtualNetwork, error) {
-	or := networkReader.Reader{
-		PageOffset: pageOffset,
-	}
-
-	res, err := r.readResources(&or)
-	if err != nil {
-		return nil, err
-	}
-
-	objs := make([]*resources.VirtualNetwork, len(res))
-	for i, e := range res {
-		objs[i] = e.(*resources.VirtualNetwork)
 	}
 
 	return objs, err
