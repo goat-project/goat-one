@@ -143,11 +143,11 @@ func (r *Reader) ListAllVirtualMachines(pageOffset int) ([]*resources.VirtualMac
 
 // ListAllActiveVirtualMachinesForUser lists all virtual machines by page offset specific for a user given by id.
 func (r *Reader) ListAllActiveVirtualMachinesForUser(userID int) ([]*resources.VirtualMachine, error) {
-	vnr := networkReader.VMReader{
+	vmr := virtualMachineReader.VMReaderForUser{
 		User: resources.CreateUserWithID(userID),
 	}
 
-	res, err := r.readResourcesForUser(&vnr)
+	res, err := r.readResourcesForUser(&vmr)
 	if err != nil {
 		return nil, err
 	}
